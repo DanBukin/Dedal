@@ -1,0 +1,13 @@
+tkinter
+json
+bisect
+sys
+math
+customtkinter
+PIL
+pandas
+openpyxl
+xlsxwriter
+matplotlib
+cantera
+
