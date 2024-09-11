@@ -11,7 +11,7 @@ import numpy as np
 import math
 import customtkinter as ctk
 
-
+#ergbterghrtgrtg
 font_path = 'data/ofont.ru_Futura PT.ttf'
 font_props = font_manager.FontProperties(fname=font_path)
 if os.name == 'nt':
