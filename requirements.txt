@@ -1,0 +1,7 @@
+customtkinter
+pandas
+openpyxl
+xlsxwriter
+matplotlib
+cantera
+scipy
