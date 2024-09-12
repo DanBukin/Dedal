@@ -80,6 +80,7 @@ user = User()
 class DedalApp(ctk.CTk):
     """----------------------------Окно с выбором начальных параметров----------------------------"""
     def __init__(self):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
 
         self.font1 = ("Futura PT Book", 16)  # Настройка пользовательского шрифта 1
@@ -123,17 +124,13 @@ class DedalApp(ctk.CTk):
         # Привязка события к изменению переменной auto_fill_var
         self.auto_fill_var.trace_add("write", lambda *args: self.update_enthalpy())
         self.periodic_check()
-    def combobox_callback1(self,value):
-        self.oxigen = value
-        self.periodic_check()
-    def combobox_callback2(self,value):
-        self.fuel = value
-        self.periodic_check()
     def periodic_check(self):
+        """=====Обновление параметров====="""
         if self.is_running:
             self.update_enthalpy()
             self.alpha_input()
     def alpha_input(self):
+        """=====Обновление параметров в зависимости от нажатия радио-кнопки====="""
         if self.is_running:
             if self.radio_var_alpha.get() == 1:  # Если выбрана первая радиокнопка
                 if self.Entry_alpha:
@@ -143,6 +140,7 @@ class DedalApp(ctk.CTk):
                     self.Entry_alpha.place(x=5, y=90)
 
     def update_enthalpy(self):
+        """=====Появляние и исчезновение объектов в заисимости от выбора пользователя====="""
         self.selected_substance_oxigen = self.combobox1.get()  # Получаем выбранный окислитель
         self.selected_substance_fuel = self.combobox2.get()  # Получаем выбранное горючее
 
@@ -183,26 +181,8 @@ class DedalApp(ctk.CTk):
             self.label_oxigen.place_forget()
             self.label_fuel.place_forget()
 
-    def get_selected_option(self):
-        # Возвращает выбранный вариант
-        self.selected_option = None
-        if self.radio_var.get() == 1:
-            self.selected_option = "Равновесный"
-        elif self.radio_var.get() == 2:
-            self.selected_option = "Замороженный"
-        return self.selected_option
-
-    def get_selected_option_alpha(self):
-        # Возвращает выбранный вариант
-        self.selected_option_alpha = None
-        if self.radio_var_alpha.get() == 1:
-            self.selected_option_alpha = "Оптимальный"
-        elif self.radio_var_alpha.get() == 2:
-            self.selected_option_alpha = "Заданный"
-        return self.selected_option_alpha
-
     def setup_label(self):
-        """--------------------Создание Надписей--------------------"""
+        """=====Создание Надписей====="""
         self.label1 = create_label(self, "Добро пожаловавть в программу 'Дедал' !", 400, 5)
         self.label2 = create_label(self.frame1, "Пожалуйста,\nвыберите компоненты:", 25, 5)
         self.label3 = create_label(self.frame3, "Окислитель:", x=10, y=0)
@@ -216,7 +196,7 @@ class DedalApp(ctk.CTk):
         self.label11 = create_label(self.frame7, "МПа", x=115, y=25)
         self.label12 = create_label(self.frame8, "МПа", x=115, y=25)
     def setup_frame(self):
-        """--------------------Создание мини-окон--------------------"""
+        """=====Создание мини-окон====="""
         self.frame1 = create_frame(self,200, 470,10,10,"#2b2b2b","transparent")
         self.frame2 = create_frame(self,640, 50,220,35,"#2b2b2b","transparent")
         self.frame3 = create_frame(self,180, 120, 20,60,"#3D3D3D", '#2b2b2b')
@@ -228,7 +208,7 @@ class DedalApp(ctk.CTk):
         self.frame9 = create_frame(self,150, 80, 555,390,"#3D3D3D", '#2b2b2b')
 
     def setup_entry(self):
-        """--------------------Создание окон с вводом данных--------------------"""
+        """=====Создание окон с вводом данных====="""
         self.entry1_value = ctk.StringVar()
         self.entry2_value = ctk.StringVar()
         self.entry3_value = ctk.StringVar()
@@ -241,12 +221,21 @@ class DedalApp(ctk.CTk):
         self.Entry_alpha = ctk.CTkEntry(master=self.frame5, width=140, textvariable=self.entry5_value)
 
     def setup_combobox(self):
+        """=====Создание ячеек с компонентами====="""
         self.combobox1 = ctk.CTkComboBox(self.frame3,values=["", "Кислород", "Озон", "АК", "АК-27", "АТ", "Перекись водорода", "Воздух"],command=self.combobox_callback1, font=self.font2, width=170)
         self.combobox2 = ctk.CTkComboBox(self.frame4,values=["", "Водород", "НДМГ", "Метан", "Аммиак", "Керосин РГ-1", "Керосин Т-1","Керосин RP-1", "Синтин", "Боктан", "Этанол", "ММГ", "Гидразин", "Анилин","Триэтиламин", "Ксилидин", ], command=self.combobox_callback2, font=self.font2,width=170)
         self.combobox1.place(x=5, y=25)
         self.combobox2.place(x=5, y=25)
-
+    def combobox_callback1(self,value):
+        """=====Функиця, связанная с сохранением выбранного окислителя====="""
+        self.oxigen = value
+        self.periodic_check()
+    def combobox_callback2(self,value):
+        """=====Функиця, связанная с сохранением выбранного горючего====="""
+        self.fuel = value
+        self.periodic_check()
     def setup_button(self):
+        """=====Создание кнопок====="""
         self.button0 = create_button(self, "?", lambda: show_spravka(self),self.font1, 20, 840, 5)
         self.button1 = create_button(self.frame2, "Свойства окислителя", lambda: show_oxigen_properties(self),self.font1, 200, 10, 10)
         self.button2 = create_button(self.frame2, "Свойства горючего", lambda: show_fuel_properties(self), self.font1,200, 215, 10)
@@ -255,13 +244,8 @@ class DedalApp(ctk.CTk):
 
         show_fuel_properties(self)
 
-    def on_radio_button1_clicked(self):
-        self.periodic_check()
-
-    def on_radio_button2_clicked(self):
-        self.periodic_check()
-
     def setup_radio(self):
+        """=====Создание радио-кнопок с выбором режима и типом поиска к.и.о====="""
         self.radio_var = ctk.IntVar()
         self.radio_var_alpha = ctk.IntVar(value=2)
 
@@ -274,12 +258,37 @@ class DedalApp(ctk.CTk):
         self.radio_option2.place(x=10, y=50)
         self.radio_option3.place(x=10, y=30)
         self.radio_option4.place(x=10, y=60)
+    def on_radio_button1_clicked(self):
+        """=====Обновление параметров при нажании на радио-кнопку====="""
+        self.periodic_check()
 
+    def on_radio_button2_clicked(self):
+        """=====Обновление параметров при нажании на радио-кнопку====="""
+        self.periodic_check()
+    def get_selected_option(self):
+        """=====Возвращает тип течения потока====="""
+        self.selected_option = None
+        if self.radio_var.get() == 1:
+            self.selected_option = "Равновесный"
+        elif self.radio_var.get() == 2:
+            self.selected_option = "Замороженный"
+        return self.selected_option
+    def get_selected_option_alpha(self):
+        """=====Возвращает тип поиска к.и.о.====="""
+        self.selected_option_alpha = None
+        if self.radio_var_alpha.get() == 1:
+            self.selected_option_alpha = "Оптимальный"
+        elif self.radio_var_alpha.get() == 2:
+            self.selected_option_alpha = "Заданный"
+        return self.selected_option_alpha
     def setup_checkbox(self):
+        """=====Выбор автоматического поиска энтальпии у компонентов====="""
         self.auto_fill_var = ctk.IntVar(value=1)  # Переменная для отслеживания состояния чекбокса (0 - не нажат, 1 - нажат)
         self.auto_fill_checkbox = ctk.CTkCheckBox(self, text="Авто", variable=self.auto_fill_var, font=self.font1)
         self.auto_fill_checkbox.place(x=720, y=400)
+
     def close_window(self):
+        """=====Закрытие окна с предварительным сохранием данных====="""
         # Сохраняем данные перед уничтожением основного окна
         self.p_k = self.entry3_value.get()
         self.p_a = self.entry4_value.get()
@@ -302,7 +311,6 @@ class DedalApp(ctk.CTk):
         # Закрываем основное окно
         self.is_running = False
         self.destroy()
-
         user.p_k = self.p_k
         user.p_a = self.p_a
         user.oxigen =self.oxigen
@@ -320,6 +328,7 @@ class DedalApp(ctk.CTk):
 class SecondWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой основных параметров в зависимости от к.и.о.----------------------------"""
     def __init__(self, oxigen, fuel, p_k, p_a, alpha, alpha_value, selected_option, formula_gor, formula_ox, H_gor, H_ok):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.oxigen_naz = oxigen
         self.fuel_naz = fuel
@@ -370,9 +379,11 @@ class SecondWindow(ctk.CTk):
         self.graph_opt()
         self.but_exel()
     def scrollbar(self):
+        """=====Создание пролистывающегося фрейма====="""
         self.scrollbar_frame = ctk.CTkScrollableFrame(self, width=830, height=370+95,fg_color='#171717') #171717
         self.scrollbar_frame.place(x=10, y=10)
     def place_label(self):
+        """=====Создание Надписей====="""
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame, text=f"Окислитель: {self.oxigen_naz}",font=self.font1)
         self.label1.grid(row=0, column=0,sticky='w', padx=10, pady=0)
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame, text=f"Горючее: {self.fuel_naz}",font=self.font1)
@@ -382,10 +393,12 @@ class SecondWindow(ctk.CTk):
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame, text=f"Давление на срезе: {self.p_a} МПа",font=self.font1)
         self.label1.grid(row=3, column=0, sticky='w',padx=10, pady=0)
     def graph_opt(self):
+        """=====Заполнение массивов основных параметров====="""
         self.alph_array,self.I_array,self.T_array,self.R_array,self.alpha_itog=optimalnaya_alpha(self.choice, self.p_k, self.p_a, self.alpha,
                           self.fuel, self.oxidizer, self.H_gor, self.H_ok, self.km0, self.scrollbar_frame,0)
         user.alpha_itog=self.alpha_itog
     def but_exel(self):
+        """=====Создание кнопок====="""
         self.button1_I_exel = ctk.CTkButton(master=self.scrollbar_frame,text="Excel",width=60,command=lambda: save_to_excel_I_a(self.I_array, self.alph_array))
         self.button1_I_exel.place(x=615,y=460)
         self.button1_I_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt_I_a(self.I_array, self.alph_array))
@@ -407,6 +420,7 @@ class SecondWindow(ctk.CTk):
         self.button_close = ctk.CTkButton(master=self.scrollbar_frame, text="Дальше", width=100,command=lambda: self.close_window())
         self.button_close.place(x=725, y=1470)
     def back_window(self):
+        """=====Возвращение к предыдущему окну====="""
         self.destroy()
         user.oxigen=None
         user.fuel=None
@@ -423,12 +437,14 @@ class SecondWindow(ctk.CTk):
         app = DedalApp()
         app.mainloop()
     def close_window(self):
+        """=====Переход к следующему окну====="""
         self.destroy()
         third_window = ThirdWindow(self.formula_ox,self.formula_gor,self.p_k,self.p_a,self.alpha,self.km0,self.tech,self.H_gor,self.H_ok,self.alpha_itog,self.choice)
         third_window.mainloop()
 class ThirdWindow(ctk.CTk):
     """----------------------------Окно с выводом данных в основных сечениях камеры (Астра/Терра)----------------------------"""
     def __init__(self,formula_ox,formula_gor,p_k,p_a,alpha,km0,tech,H_gor,H_ok,alpha_itog,choice):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.formula_ox = formula_ox
         self.formula_gor = formula_gor
@@ -470,6 +486,7 @@ class ThirdWindow(ctk.CTk):
         self.print_engine()
         self.button_excel()
     def button_excel(self):
+        """=====Создание кнопок====="""
         self.but_prop_ks_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=40,command=lambda: save_properties_txt(self.properties))
         self.but_prop_ks_txt.place(x=560, y=215)
         self.but_prop_kp_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=40,command=lambda: save_properties_txt(self.properties_kp))
@@ -492,22 +509,8 @@ class ThirdWindow(ctk.CTk):
 
         self.but_close = ctk.CTkButton(master=self.scrollbar_frame, text="Дальше", width=100,command=lambda:self.close_window())
         self.but_close.place(x=730, y=2140 - 50)
-    def back_window(self):
-        user.R_k = None
-        user.T_k = None
-        user.B = None
-        user.T_kp = None
-        user.R_kp = None
-        user.k_kp = None
-        user.p_kp = None
-        user.w_a = None
-        user.rho_a = None
-        user.k_a = None
-        self.destroy()
-        second_window = SecondWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha, user.alpha_value,
-                                     user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok)
-        second_window.mainloop()
     def print_engine(self):
+        """=====Отрисовка изображений в окне====="""
         self.original_image = Image.open("data/engine_ks.png")  # Путь к изображению
         self.resized_image = self.original_image.resize((round(421*0.9), round(231*0.9)), Image.Resampling.LANCZOS)
         self.global_image = ImageTk.PhotoImage(self.resized_image)
@@ -529,6 +532,7 @@ class ThirdWindow(ctk.CTk):
         self.image_label.place(x=560, y=1480)
         self.image_label.configure(text="")
     def scrollbar(self):
+        """=====Создание прокручивающихся фреймов====="""
         self.scrollbar_frame = ctk.CTkScrollableFrame(self, width=830, height=370 + 95,fg_color='#171717')  # 171717
         self.scrollbar_frame.place(x=10, y=10)
         self.scrollbar_frame_1 = ctk.CTkScrollableFrame(self.scrollbar_frame, width=520, height=30,fg_color='black')  # 520
@@ -544,6 +548,7 @@ class ThirdWindow(ctk.CTk):
         self.scrollbar_frame_6 = ctk.CTkScrollableFrame(self.scrollbar_frame, width=320, height=400,fg_color='black')  # 520
         self.scrollbar_frame_6.grid(row=8, column=0, padx=5, pady=15, sticky='w')
     def options_KS(self):
+        """=====Вывод всей информации, связанной с КС====="""
         self.properties,self.species_names,self.mass_fractions,self.mole_fractions,self.R_k,self.T_k =options_ks(self.choice,self.p_k,self.alpha_itog,self.formula_gor,self.formula_ox,self.H_gor,self.H_ok,self.km0)
         user.R_k = self.R_k
         user.T_k = self.T_k
@@ -564,6 +569,7 @@ class ThirdWindow(ctk.CTk):
                 self.label1.grid(row=self.i, column=2, sticky='w', padx=20, pady=0)
                 self.i +=1
     def options_KP(self):
+        """=====Вывод всей информации, связанной с критическим сечением====="""
         self.properties_kp,self.species_names_kp,self.mass_fractions_kp,self.mole_fractions_kp,self.F_kp,self.beta_kp,self.T_kp,self.R_kp,self.k_kp,self.p_kp=options_kp(self.choice,self.p_k,self.alpha_itog,self.formula_gor,self.formula_ox,self.H_gor,self.H_ok, self.km0)
         user.B = self.beta_kp
         user.T_kp = self.T_kp
@@ -590,6 +596,7 @@ class ThirdWindow(ctk.CTk):
                 self.label1.grid(row=self.i, column=2, sticky='w', padx=20, pady=0)
                 self.i += 1
     def options_A(self):
+        """=====Вывод всей информации, связанной со срезом сопла====="""
         self.properties_a, self.species_names_a, self.mass_fractions_a, self.mole_fractions_a,self.I_a,self.F_a,self.w_a,self.rho_a,self.k_a = options_a(
             self.choice, self.p_k,self.p_a, self.alpha_itog, self.formula_gor, self.formula_ox, self.H_gor, self.H_ok, self.km0)
         user.w_a=self.w_a
@@ -615,6 +622,7 @@ class ThirdWindow(ctk.CTk):
                 self.label1.grid(row=self.i, column=2, sticky='w', padx=20, pady=0)
                 self.i += 1
     def place_label(self):
+        """=====Создание надписей в окне====="""
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame, text=f"Параметры в камере сгорания",font=self.font3)
         self.label1.grid(row=0, column=0, padx=10, pady=0)
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame_1, text=(self.properties), font=self.font1,justify='left')
@@ -628,6 +636,7 @@ class ThirdWindow(ctk.CTk):
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame_5, text=(self.properties_a), font=self.font1,justify='left')
         self.label1.grid(row=0, column=0, sticky='w', padx=10, pady=0)
     def donut_mass(self):
+        """=====Создание круговой диаграммы====="""
         self.elements_value = {}
         for i in range(len(self.species_names)):
             self.elements_value[self.species_names[i]] = list(self.mass_fractions)[i]
@@ -645,7 +654,24 @@ class ThirdWindow(ctk.CTk):
             self.elements_value_a[self.species_names_a[i]] = list(self.mass_fractions_a)[i]
         self.sorted_elements_a = sorted(self.elements_value_a.items(), key=lambda item: item[1], reverse=True)
         donut_diagramm(mass=self.sorted_elements_a, max=3, master=self.scrollbar_frame, x=550, y=2515)
+    def back_window(self):
+        """=====Переход к предыдущему окну====="""
+        user.R_k = None
+        user.T_k = None
+        user.B = None
+        user.T_kp = None
+        user.R_kp = None
+        user.k_kp = None
+        user.p_kp = None
+        user.w_a = None
+        user.rho_a = None
+        user.k_a = None
+        self.destroy()
+        second_window = SecondWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha, user.alpha_value,
+                                     user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok)
+        second_window.mainloop()
     def close_window(self):
+        """=====Переход к следующему окну====="""
         self.destroy()
         user.I_a=self.I_a
         user.F_a = self.F_a
@@ -654,6 +680,7 @@ class ThirdWindow(ctk.CTk):
 class NozzleWindow(ctk.CTk):
     """----------------------------Окно с выбором параметров для построения сужающейся части----------------------------"""
     def __init__(self,I_a,F_kp,F_a,p_k):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.I_a=float(I_a)
         self.F_kp_otn = float(F_kp)
@@ -699,6 +726,7 @@ class NozzleWindow(ctk.CTk):
         self.scrollbar_frame_1.place(x=440, y=220)
 
     def place_frame(self):
+        """=====Создание мини-окон внутри основного окна====="""
         self.frame1 = create_frame(self,200, 100,10,10,"#171717","transparent")
         self.frame2 = create_frame(self, 340, 100, 220, 10, "#171717", "transparent")
         self.frame3 = create_frame(self, 300, 100, 565, 10, "black", "transparent")
@@ -710,6 +738,7 @@ class NozzleWindow(ctk.CTk):
         self.frame7 = create_frame(self.frame9, 265, 150, 2, 2, "#171717", "transparent")
         self.frame8 = create_frame(self.frame9, 120, 150, 270, 2, "#171717", "transparent")
     def place_label(self):
+        """=====Создание надписей====="""
         self.label1 = create_label(self.frame1, "Введите пустотную тягу:", 10, 2)
         self.label1 = create_label(self.frame1, "кН", 75, 30)
         self.label2 = create_label_2(self.frame1, "Тогда расход равен:", 10, 50)
@@ -748,24 +777,15 @@ class NozzleWindow(ctk.CTk):
         self.label29 = create_label(self.frame9, "", 10, 195)
 
     def place_entry(self):
+        """=====Создание строки для ввода пустотной тяги====="""
         self.entry1_value = ctk.StringVar()
         self.Entry1 = create_entry(self.frame1, 60, self.entry1_value, 10, 30)
     def place_button(self):
+        """=====Создание кнопок====="""
         self.back_button = create_button(self, "Назад", lambda: self.back_window(), self.font1, 90, 650, 450)
         self.close_button = create_button(self, "Далее", lambda: self.close_window(), self.font1, 100, 750, 450)
-    def back_window(self):
-        self.destroy()
-        user.F_kp = None
-        user.F_ks = None
-        user.Rad_kp = None
-        user.Rad_a = None
-        user.Rad_ks = None
-        user.P = None
-        user.m_sum = None
-        third_window = ThirdWindow(user.formula_ox, user.formula_gor, float(user.p_k), float(user.p_a), user.alpha, float(user.alpha_value),
-                                   user.selected_option, user.H_gor, user.H_ok, user.alpha_itog, user.choice)
-        third_window.mainloop()
     def print_true_nozzle(self):
+        """=====Проверка на возможность спроектировать радиусное сопло====="""
         if self.R_1 is None:
             self.R_1=self.R_ks*1.00
         if self.R_2 is None:
@@ -777,10 +797,12 @@ class NozzleWindow(ctk.CTk):
         self.label28.configure(text=f"{self.blr}")
         self.label29.configure(text=f"Радусное сопло можно спроектировать под углом,\nравным {round(self.sav,2)}°")
     def show_qm(self):
+        """=====Проверка на возможность вывода основных размеров====="""
         if self.P is not None and self.kost is not None:
             self.F_otn_1 = self.kost
             self.options_geomerty()
     def options_geomerty(self):
+        """=====Вывод размеров в 3-ёх основных точках ====="""
         self.F_kp = self.F_kp_otn * self.m_sum
         self.F_ks=self.F_kp*self.F_otn_1
         user.F_kp = self.F_kp
@@ -809,6 +831,7 @@ class NozzleWindow(ctk.CTk):
         self.label20.configure(text=f'D_a = {f"{self.D_a:.2f}"} мм')
         self.label21.configure(text=f'R_a = {f"{self.R_a:.2f}"} мм')
     def show_thrust(self):
+        """=====Вывод массового расхода====="""
         self.P=float(self.entry1_value.get())
         user.P=self.P*1000
         self.m_sum=(self.P*1000)/self.I_a
@@ -818,6 +841,7 @@ class NozzleWindow(ctk.CTk):
         else:
             self.label3 = create_label_2(self.frame1, f'{f"{self.m_sum:.2f}"} кг/с', 10, 70)
     def place_slider(self):
+        """=====Создание слайдеров с выбором радиусов====="""
         self.slider = ctk.CTkSlider(self.frame2, from_=2, to=6,command=self.on_slider_change,number_of_steps=80,border_width=4, width=150, height=15,fg_color=("#474747"),progress_color=("#0094FF"))
         self.slider.place(x=50,y=35)
         self.slider.set(4)
@@ -831,38 +855,53 @@ class NozzleWindow(ctk.CTk):
         self.slider_3.place(x=80, y=112)
         self.slider_3.set(30)
     def print_soplo(self):
+        """=====Отрисовка изображения из методички Дорофеева====="""
         self.original_image = Image.open("data/soplo.png")  # Путь к изображению
         self.resized_image = self.original_image.resize((round(426*1.50), round(210*1.50)), Image.Resampling.LANCZOS)
         self.global_image = ImageTk.PhotoImage(self.resized_image)
         self.image_label = ctk.CTkLabel(self, image=self.global_image)
         self.image_label.place(x=10, y=240)
         self.image_label.configure(text="")
-    def on_slider_change_1(self, value):
-        # Обновление текста метки в соответствии со значением ползунка
-        self.label22.configure(text=f"R_1 = R_ks*{value:.2f}")
-        self.kost_1=value
-        self.R_1=self.R_ks*self.kost_1
-        self.print_true_nozzle()
-    def on_slider_change_2(self, value):
-        # Обновление текста метки в соответствии со значением ползунка
-        self.label23.configure(text=f"R_2 = R_кр*{value:.2f}")
-        self.kost_2=value
-        self.R_2 = self.R_kp * self.kost_2
-        self.print_true_nozzle()
-    def on_slider_change_3(self, value):
-        # Обновление текста метки в соответствии со значением ползунка
-        self.label24.configure(text=f"α/2 = {value}°")
-        self.kost_3=value
-        self.alpha_rad_kon=self.kost_3
-        self.print_true_nozzle()
     def on_slider_change(self, value):
-        # Обновление текста метки в соответствии со значением ползунка
+        """=====Обновлении информации при изменении положения ползунка, связанного с площадью====="""
         self.label4.configure(text=f"Значение Fотн =: {value:.2f}")
         self.kost=value
         self.show_thrust()
         self.show_qm()
         self.print_true_nozzle()
+    def on_slider_change_1(self, value):
+        """=====Обновлении информации при изменении положения ползунка №1====="""
+        self.label22.configure(text=f"R_1 = R_ks*{value:.2f}")
+        self.kost_1=value
+        self.R_1=self.R_ks*self.kost_1
+        self.print_true_nozzle()
+    def on_slider_change_2(self, value):
+        """=====Обновлении информации при изменении положения ползунка №2====="""
+        self.label23.configure(text=f"R_2 = R_кр*{value:.2f}")
+        self.kost_2=value
+        self.R_2 = self.R_kp * self.kost_2
+        self.print_true_nozzle()
+    def on_slider_change_3(self, value):
+        """=====Обновлении информации при изменении положения ползунка №3====="""
+        self.label24.configure(text=f"α/2 = {value}°")
+        self.kost_3=value
+        self.alpha_rad_kon=self.kost_3
+        self.print_true_nozzle()
+    def back_window(self):
+        """=====Переход к предыдущему окну====="""
+        self.destroy()
+        user.F_kp = None
+        user.F_ks = None
+        user.Rad_kp = None
+        user.Rad_a = None
+        user.Rad_ks = None
+        user.P = None
+        user.m_sum = None
+        third_window = ThirdWindow(user.formula_ox, user.formula_gor, float(user.p_k), float(user.p_a), user.alpha, float(user.alpha_value),
+                                   user.selected_option, user.H_gor, user.H_ok, user.alpha_itog, user.choice)
+        third_window.mainloop()
     def close_window(self):
+        """=====Переход к следующему окну====="""
         self.destroy()
         user.R_1=self.R_1
         user.R_2=self.R_2
@@ -875,6 +914,7 @@ class NozzleWindow(ctk.CTk):
 class SubsonicWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой сужающейся части----------------------------"""
     def __init__(self, R_1,R_2,R_ks,R_kp,alpha_rad_kon,aar):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.R_1 = R_1
         self.R_2 = R_2
@@ -882,7 +922,6 @@ class SubsonicWindow(ctk.CTk):
         self.R_kp = R_kp
         self.alpha_rad_kon=alpha_rad_kon
         self.kolvo=aar
-
 
         self.font1 = ("Futura PT Book", 16)  # Настройка пользовательского шрифта 1
         self.font2 = ("Futura PT Book", 14)  # Настройка пользовательского шрифта 2
@@ -919,29 +958,36 @@ class SubsonicWindow(ctk.CTk):
             self.print_subsonic_nozzle_rk()
             self.print_subsonic_nozzle_rr()
     def scrollbar_0(self):
+        """=====Создание прокручиващегося фрейма в окне====="""
         self.scrollbar_frame_0 = ctk.CTkScrollableFrame(self, width=835, height=468,fg_color='#171717')  # 171717
         self.scrollbar_frame_0.place(x=2, y=2)
     def place_frame_1(self):
+        """=====Создание окна в в фрейме====="""
         self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=500, fg_color="#171717",bg_color="transparent")
         self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
     def place_frame_2(self):
+        """=====Создание окна в в фрейме====="""
         self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=1085, fg_color="#171717",bg_color="transparent")
         self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
     def scrollbar_1(self):
+        """=====Создание небольшого прокручиващегося фрейма в окне====="""
         self.scrollbar_frame_1 = ctk.CTkScrollableFrame(self.frame0, width=200, height=200,fg_color='black')  # 171717
         self.scrollbar_frame_1.place(x=2, y=60)
     def scrollbar_2(self):
+        """=====Создание небольшого прокручиващегося фрейма в окне====="""
         self.scrollbar_frame_1 = ctk.CTkScrollableFrame(self.frame0, width=200, height=200,fg_color='black')  # 171717
         self.scrollbar_frame_1.place(x=2, y=60)
         self.scrollbar_frame_2 = ctk.CTkScrollableFrame(self.frame0, width=200, height=200, fg_color='black')  # 171717
         self.scrollbar_frame_2.place(x=2, y=565)
     def place_label_1(self):
+        """=====Создание надписей (вариант 1)====="""
         self.options_rr,self.V_suzh_rr=print_options_rr(self.R_1,self.R_2, self.R_ks,self.R_kp)
         self.label1 = ctk.CTkLabel(self.scrollbar_frame_1, text=self.options_rr, font=font1,justify='left')
         self.label1.grid(row=0, column=0, sticky='w', padx=5, pady=5)
         self.label2 = create_label_0(self.frame0, "Радиусное сопло", 350, 5)
         self.label3=create_label(self.frame0,"Геометричесчкие параметры:",10,30)
     def place_label_2(self):
+        """=====Создание надписей (вариант 2)====="""
         self.options_rr,self.V_suzh_rr = print_options_rr(self.R_1, self.R_2, self.R_ks, self.R_kp)
         self.options_rk,self.V_suzh_rk = print_options_rk(self.R_1, self.R_2, self.R_ks, self.R_kp,self.alpha_rad_kon)
         self.label1 = ctk.CTkLabel(self.scrollbar_frame_1, text=self.options_rr, font=font1,justify='left')
@@ -954,12 +1000,14 @@ class SubsonicWindow(ctk.CTk):
         self.label5 = create_label(self.frame0, "Геометричесчкие параметры:", 10, 535)
         self.label6 = create_label(self.frame0, "Какая сужающаяся часть будет использоваться?", 220, 1030)
     def place_button_1(self):
+        """=====Создание кнопок (вариант 1)====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 20, 420)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 20, 450)
         self.button1 = create_button(self.frame0, "Сохранить параметры в txt", lambda: save_options_subsonic_txt(self.options_rr), self.font1,250, 2, 285)
         self.button2 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_geom_subsonic_exel(self.x_rr,self.y_rr), self.font1,250, 2, 315)
         self.button3 = create_button(self.frame0, "Сохранить сопло в txt",lambda: save_geom_subsonic_txt(self.x_rr,self.y_rr), self.font1, 250,2, 345)
     def place_button_2(self):
+        """=====Создание кнопок (вариант 2)====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 1020)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 750, 1050)
         self.button1 = create_button(self.frame0, "Сохранить параметры в txt",lambda: save_options_subsonic_txt(self.options_rr), self.font1,250, 2, 285)
@@ -968,19 +1016,18 @@ class SubsonicWindow(ctk.CTk):
         self.button4 = create_button(self.frame0, "Сохранить параметры в txt", lambda: save_options_subsonic_txt(self.options_rk), self.font1,250, 2, 790)
         self.button5 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_geom_subsonic_exel(self.x_rk,self.y_rk), self.font1,250, 2, 820)
         self.button6 = create_button(self.frame0, "Сохранить сопло в txt",lambda:save_geom_subsonic_txt(self.x_rk,self.y_rk), self.font1, 250,2, 850)
-    def back_window(self):
-        self.destroy()
-        nozzle_window = NozzleWindow(user.I_a, user.F_kp, user.F_a, float(user.p_k))
-        nozzle_window.mainloop()
     def print_subsonic_nozzle_rk(self):
+        """=====Отрисовка радиусно-конического сопла====="""
         self.x_rk,self.y_rk=place_subsonic_nozzle_rk(self.R_ks, self.R_kp,self.R_1, self.R_2,self.alpha_rad_kon,self.frame0)
     def print_subsonic_nozzle_rr(self):
+        """=====Отрисовка радиусного сопла====="""
         self.x_rr,self.y_rr=place_subsonic_nozzle_rr(self.R_ks, self.R_kp,self.R_1, self.R_2,self.frame0)
         if self.kolvo==1:
             self.x_suzh = self.x_rr
             self.y_suzh = self.y_rr
             self.V_suzh = self.V_suzh_rr
     def setup_radio(self):
+        """=====Создание радио-кнопок выбора типа сужающегося сопла====="""
         self.radio_var = ctk.IntVar()
 
         self.radio_option1 = ctk.CTkRadioButton(self.frame0, text="Радиусная", variable=self.radio_var,command=self.on_radio_button_clicked,value=1)
@@ -989,6 +1036,7 @@ class SubsonicWindow(ctk.CTk):
         self.radio_option1.place(x=550, y=1020)
         self.radio_option2.place(x=550, y=1050)
     def on_radio_button_clicked(self):
+        """=====Сохранение и последующий расчет при выборе определённого типа сужающегося сопла====="""
         if self.radio_var.get() == 1:  # Если выбрана первая радиокнопка
             self.x_suzh=self.x_rr
             self.y_suzh = self.y_rr
@@ -999,7 +1047,13 @@ class SubsonicWindow(ctk.CTk):
             self.y_suzh = self.y_rk
             self.V_suzh = self.V_suzh_rk
             user.V_suzh=self.V_suzh
+    def back_window(self):
+        """=====Переход в предыдущее окно====="""
+        self.destroy()
+        nozzle_window = NozzleWindow(user.I_a, user.F_kp, user.F_a, float(user.p_k))
+        nozzle_window.mainloop()
     def close_window(self):
+        """=====Переход в следующее окно====="""
         self.p_k=user.p_k
         self.R_k =user.R_k
         self.T_k=user.T_k
@@ -1015,6 +1069,7 @@ class SubsonicWindow(ctk.CTk):
 class CombustionChamberWindow(ctk.CTk):
     """----------------------------Окно с выбором времени пребывания для построения КС----------------------------"""
     def __init__(self, p_k,R_k,T_k,m_sum,V_suzh,x_suzh,y_suzh,F_ks,F_kp,B):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.p_k = p_k
         self.R_k = R_k
@@ -1052,7 +1107,16 @@ class CombustionChamberWindow(ctk.CTk):
         self.print_engine()
         self.place_label()
         self.print_entry()
+    def place_scrollbar(self):
+        """=====Создание прокручивающегося фрейма в окне====="""
+        self.scrollbar_frame_0 = ctk.CTkScrollableFrame(self, width=835, height=468,fg_color='#171717')  # 171717
+        self.scrollbar_frame_0.place(x=2, y=2)
+    def place_frame(self):
+        """=====Создание полотна в фрейме====="""
+        self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=1085, fg_color="#171717",bg_color="transparent")
+        self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
     def print_engine(self):
+        """=====Отрисовка изображения====="""
         self.original_image = Image.open("data/tau_pr.png")  # Путь к изображению
         self.resized_image = self.original_image.resize((round(524*2.35), round(214*2.35)), Image.Resampling.LANCZOS)
         self.global_image = ImageTk.PhotoImage(self.resized_image)
@@ -1060,10 +1124,12 @@ class CombustionChamberWindow(ctk.CTk):
         self.image_label.place(x=2, y=2)
         self.image_label.configure(text="")
     def print_entry(self):
+        """=====Создание строки для ввода времени пребывания====="""
         self.entry1_value = ctk.StringVar()
         self.Entry1 = create_entry(self.frame0, 60, self.entry1_value, 320, 340)
 
     def enter_change(self):
+        """=====Расчёт и вывод характеристических параметров камеры сгорания====="""
         # Обновление текста метки в соответствии со значением ползунка
         self.tau_pr=float(self.entry1_value.get())
         self.label1.configure(text=f"Условное время пребывания: {self.tau_pr:.2f} мс")
@@ -1073,21 +1139,18 @@ class CombustionChamberWindow(ctk.CTk):
         self.label5.configure(text=f"Приведённая (характеристическая) длина: {self.l_pr:.2f} м")
         self.x_dozv,self.y_dozv=print_Combustion_Chamber(self.x_suzh,self.y_suzh,self.frame0,self.L_ks)
     def place_label(self):
+        """=====Создание надписей====="""
         self.label = create_label_0(self.frame0, "Введите условное время пребывания (мс):", 10, 340)
         self.label1 = create_label_0(self.frame0, f"Условное время пребывания:", 10, 365)
         self.label4 = create_label_0(self.frame0, f"Длина камеры сгорания:", 10, 390)
         self.label5 = create_label_0(self.frame0, f"Приведённая (характеристическая) длина:", 10, 415)
-    def place_scrollbar(self):
-        self.scrollbar_frame_0 = ctk.CTkScrollableFrame(self, width=835, height=468,fg_color='#171717')  # 171717
-        self.scrollbar_frame_0.place(x=2, y=2)
-    def place_frame(self):
-        self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=1085, fg_color="#171717",bg_color="transparent")
-        self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
     def place_button(self):
+        """=====Создание кнопок====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 1020)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 750, 1050)
         self.enter_button = create_button(self.frame0, "Ввод", lambda: self.enter_change(), self.font1, 80, 390, 340)
     def back_window(self):
+        """=====Переход в предыдущее окно====="""
         self.destroy()
         user.L_ks = None
         user.teta_a = None
@@ -1095,6 +1158,7 @@ class CombustionChamberWindow(ctk.CTk):
         nozzle_subsonic_window = SubsonicWindow(user.R_1, user.R_2, user.Rad_ks, user.Rad_kp, user.alpha_rad_kon, user.aar)
         nozzle_subsonic_window.mainloop()
     def close_window(self):
+        """=====Переход в следующее окно====="""
         self.teta_a=find_teta_a(float(user.p_a),float(user.p_k))
         self.teta_m = find_teta_m(float(user.w_a),float(user.T_kp),float(user.R_kp),float(user.k_kp))
         self.Rad_kp=user.Rad_kp
@@ -1110,6 +1174,7 @@ class CombustionChamberWindow(ctk.CTk):
 class LavalWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой профилированного сопла Лаваля----------------------------"""
     def __init__(self, teta_a,teta_m,Rad_kp,Rad_a,x_dozv,y_dozv,L_ks):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.teta_a=teta_a
         self.teta_m=teta_m
@@ -1146,16 +1211,19 @@ class LavalWindow(ctk.CTk):
         user.x_sv=self.x_sv
         user.y_sv =self.y_sv
 
-
-    def place_label(self):
-        self.label = create_label_0(self.frame0, "Проектирование сопла прошло успешно, поздравляем!", 100, 10)
     def place_scrollbar(self):
+        """=====Создание прокручивающегося фрейма в окне====="""
         self.scrollbar_frame_0 = ctk.CTkScrollableFrame(self, width=835, height=468,fg_color='#171717')  # 171717
         self.scrollbar_frame_0.place(x=2, y=2)
     def place_frame(self):
+        """=====Создание полотна в фрейме====="""
         self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=910, fg_color="#171717",bg_color="transparent")
         self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
+    def place_label(self):
+        """=====Создание надписей====="""
+        self.label = create_label_0(self.frame0, "Проектирование сопла прошло успешно, поздравляем!", 100, 10)
     def place_button(self):
+        """=====Создание кнопок====="""
         self.save_nozzle = create_button(self.frame0, "Сохранить в excel",
                                          lambda: save_to_excel_laval(self.x_total, self.y_total), self.font1, 100, 50,
                                          840)
@@ -1165,6 +1233,7 @@ class LavalWindow(ctk.CTk):
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 840)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 750, 870)
     def back_window(self):
+        """=====Переход в предыдущее окно====="""
         self.destroy()
         user.x_sv = None
         user.y_sv = None
@@ -1173,6 +1242,7 @@ class LavalWindow(ctk.CTk):
         combustion_chamber_window.mainloop()
 
     def close_window(self):
+        """=====Переход в следующее окно====="""
         self.destroy()
         Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
                                      user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,user.p_kp)
@@ -1181,8 +1251,8 @@ class LavalWindow(ctk.CTk):
 class GraphWindow(ctk.CTk):
     """----------------------------Окно с выводом всех основных параметров по длине сопла----------------------------"""
     def __init__(self,oxigen,fuel,p_k, p_a, alpha_itog, alpha_value,selected_option,formula_gor,formula_ox,H_gor,H_ok,p_kp):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
-
         self.p_k = float(p_k)
         self.p_a = float(p_a)
         self.oxigen = oxigen
@@ -1226,17 +1296,21 @@ class GraphWindow(ctk.CTk):
         self.calculation_dozv()
         self.place_button()
     def slice_p(self):
+        """=====Деление массива даления на точки для построения графиков====="""
         self.p_dozv_array_0 = np.linspace(self.p_k, (self.p_k+self.p_kp)*0.5, 10)
         self.p_dozv_array = np.linspace((self.p_k+self.p_kp)*0.5, self.p_kp, 10)
         self.p_cverhzv_array = np.linspace(self.p_kp, self.p_a, 30)
     def place_scrollbar(self):
+        """=====Создание прокручивающегося фрейма в окне====="""
         self.scrollbar_frame_0 = ctk.CTkScrollableFrame(self, width=835, height=468,fg_color='#171717')  # 171717
         self.scrollbar_frame_0.place(x=2, y=2)
 
     def place_frame(self):
+        """=====Создание полотна в фрейме====="""
         self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=3300, fg_color="#171717",bg_color="transparent")
         self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
     def place_button(self):
+        """=====Создание кнопок====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 735, 3220)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 735, 3250)
         self.save_exel_1 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.p_graph), self.font1, 70,660, 390)
@@ -1255,6 +1329,7 @@ class GraphWindow(ctk.CTk):
         self.save_txt_6 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.labda_w),self.font1, 40, 675, 2770)
         self.save_txt_7 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.rw),self.font1, 40, 675, 3230)
     def calculation_dozv(self):
+        """=====Расчёт основных параметров в дозвуковой и сверхзвуковой частях и отображение графиков====="""
         self.T_dozv_array_0, self.rho_dozv_array_0, self.R_dozv_array_0, self.k_dozv_array_0, self.w_dozv_array_0, self.F_dozv_array_0 = raschet_dozv(
             self.alpha_value, self.alpha_itog, self.H_gor, self.H_ok, self.formula_gor, self.formula_ox, self.p_k,
             self.selected_option, self.p_dozv_array_0)
@@ -1321,16 +1396,19 @@ class GraphWindow(ctk.CTk):
         print_graph_p_x(self.x_graph, self.labda_w, user.L_ks, self.frame0, 30, 3550,"Изменение приведённой скорости по длине сопла", 'х, мм', "lambda")
         print_graph_p_x(self.x_graph, self.rw, user.L_ks, self.frame0, 30, 4250,"Изменение расходонапряжённости по длине сопла", 'х, мм', "rw, кг/м2с")
     def back_window(self):
+        """=====Переход в предыдущее окно====="""
         self.destroy()
         nozzle_laval_window = LavalWindow(user.teta_a, user.teta_m, user.Rad_kp, user.Rad_a, user.x_dozv, user.y_dozv,user.L_ks)
         nozzle_laval_window.mainloop()
     def close_window(self):
+        """=====Переход в следующее окно====="""
         self.destroy()
         Losses_window = LossesWindow(self.x_dzv,self.r_dzv,self.T_dozv,self.rho_dozv,self.R_dozv,self.k_dozv,self.w_dozv,self.F_dozv,self.x_svzv,self.M_dozv,self.r_sv,self.T_sv_array,self.rho_sv_array,self.R_sv_array,self.k_sv_array,self.w_sv_array,self.M_sv,self.F_sv_array)
         Losses_window.mainloop()
 class LossesWindow(ctk.CTk):
     """----------------------------Окно, связанное с потерями и коническим соплом----------------------------"""
     def __init__(self,x_dzv,r_dzv,T_dozv,rho_dozv,R_dozv,k_dozv,w_dozv,F_dozv,x_svzv,M_dozv,r_sv,T_sv_array,rho_sv_array,R_sv_array,k_sv_array,w_sv_array,M_sv,F_sv_array):
+        """=====Начальные значения атрибутов класса====="""
         super().__init__()
 
         self.x_dzv=x_dzv
@@ -1378,14 +1456,17 @@ class LossesWindow(ctk.CTk):
         self.place_label()
         self.place_button()
     def place_scrollbar(self):
+        """=====Создание прокручивающегося фрейма в окне====="""
         self.scrollbar_frame_0 = ctk.CTkScrollableFrame(self, width=835, height=468,fg_color='#171717')  # 171717
         self.scrollbar_frame_0.place(x=2, y=2)
     def place_frame(self):
+        """=====Создание мини-окон====="""
         self.frame0 = ctk.CTkFrame(master=self.scrollbar_frame_0, width=830, height=1590, fg_color="#171717",bg_color="transparent")
         self.frame0.grid(row=0, column=0, sticky='w', padx=1, pady=1)
         self.scrollbar_frame_1 = ctk.CTkScrollableFrame(self.frame0, width=650, height=170,fg_color='black')  # 520
         self.scrollbar_frame_1.place(x=2, y=2)
     def place_button(self):
+        """=====Создание кнопок====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 1530)
         self.close_button = create_button(self.frame0, "Выход", lambda: self.close_window(), self.font1, 80, 750, 1560)
         self.but_save_txt_optoins = create_button(self.frame0, "txt", lambda: save_txt_poteri(self.text), self.font1, 80, 700, 190)
@@ -1393,13 +1474,8 @@ class LossesWindow(ctk.CTk):
         self.but_save_excel_poteri = create_button(self.frame0, "excel", lambda: save_excel_graph_poteri(self.phi_r,self.phi_tr,self.phi_s, self.beta_kon_grad), self.font1, 80, 700, 630)
         self.but_save_txt_kon = create_button(self.frame0, "txt", lambda: save_txt_konus(self.x_total_kon,self.y_total_kon), self.font1, 80, 20,1530)
         self.but_save_excel_kon = create_button(self.frame0, "excel", lambda: save_excel_konus(self.x_total_kon,self.y_total_kon), self.font1, 80,20, 1560)
-    def back_window(self):
-        self.destroy()
-        Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
-                                     user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,
-                                     user.p_kp)
-        Graph_po_dline.mainloop()
     def poteri_dozvuk(self):
+        """=====Расчёт потерь в дозвуковой части====="""
         self.beta_j_dozv=find_angle(self.x_dzv,self.r_dzv)
         self.rho_j = srednee_znachenie(self.rho_dozv)
         self.w_j = srednee_znachenie(self.w_dozv)
@@ -1417,6 +1493,7 @@ class LossesWindow(ctk.CTk):
             self.delta_P_suzh_j[i]=self.F_j[i]*self.tau_tr_dozv[i]*(1/math.tan(self.beta_j_dozv[i]))
             self.Delta_P_suzh+=self.delta_P_suzh_j[i]
     def poteri_sverhzvuk_profil(self):
+        """=====Расчёт потерь в профилированном сопле в расширяющейся части====="""
         self.beta_j_sv=find_angle(self.x_svzv,self.r_sv)
         self.rho_j_sv = srednee_znachenie(self.rho_sv_array)
         self.w_j_sv = srednee_znachenie(self.w_sv_array)
@@ -1438,6 +1515,7 @@ class LossesWindow(ctk.CTk):
         self.phi_tr_prof=(1-(self.Delta_P_itog/user.P))
         self.phi_s_prof=self.phi_r_prof*self.phi_tr_prof
     def poteri_konich(self):
+        """=====Расчёт потерь в коническом сопле в расширяющейся части====="""
         self.beta_kon=[]
         self.beta_kon_grad=[]
         for i in range(5,31):
@@ -1488,7 +1566,15 @@ phi_s={self.max_phi}
 
         self.label = ctk.CTkLabel(self.scrollbar_frame_1, text=self.text, font=self.font1,justify='left')
         self.label.grid(row=0, column=0, sticky='w', padx=1, pady=1)
+    def back_window(self):
+        """=====Переход в предыдущее окно====="""
+        self.destroy()
+        Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
+                                     user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,
+                                     user.p_kp)
+        Graph_po_dline.mainloop()
     def close_window(self):
+        """=====Завершение работы. Выход====="""
         sys.exit()
 if __name__ == "__main__":
     app = DedalApp()
