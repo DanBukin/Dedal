@@ -6,6 +6,7 @@ import sys
 import math
 from PIL import Image, ImageTk
 from scipy.interpolate import interp1d
+
 ctk.deactivate_automatic_dpi_awareness()
 with open('data/oxigen_data.json', 'r', encoding='utf-8') as file:
     substances_data = json.load(file)
@@ -21,6 +22,7 @@ else:
     pass
 
 class User:
+    """----------------------------Храненние глобальных переменных для удобного вызова----------------------------"""
     def __init__(self):
         self.R_k=None
         self.T_k=None
@@ -76,6 +78,7 @@ class User:
 
 user = User()
 class DedalApp(ctk.CTk):
+    """----------------------------Окно с выбором начальных параметров----------------------------"""
     def __init__(self):
         super().__init__()
 
@@ -84,11 +87,6 @@ class DedalApp(ctk.CTk):
 
         self.title("DEDAL")  # Название программы
         self.resizable(False, False)  # Запрет изменения размера окна
-
-        screen_width = self.winfo_screenwidth()  # Устанавливаем размер и позицию окна
-        screen_height = self.winfo_screenheight()
-        window_width = 1305
-        window_height = 734
         self.geometry(f"{1305}x{734}+{723}+{209}")
 
         ctk.set_appearance_mode("Dark")  # Настройка темы
@@ -320,6 +318,7 @@ class DedalApp(ctk.CTk):
                                      self.selected_option, self.formula_gor, self.formula_ox, self.H_gor, self.H_ok)
         second_window.mainloop()
 class SecondWindow(ctk.CTk):
+    """----------------------------Окно с отрисовкой основных параметров в зависимости от к.и.о.----------------------------"""
     def __init__(self, oxigen, fuel, p_k, p_a, alpha, alpha_value, selected_option, formula_gor, formula_ox, H_gor, H_ok):
         super().__init__()
         self.oxigen_naz = oxigen
@@ -428,6 +427,7 @@ class SecondWindow(ctk.CTk):
         third_window = ThirdWindow(self.formula_ox,self.formula_gor,self.p_k,self.p_a,self.alpha,self.km0,self.tech,self.H_gor,self.H_ok,self.alpha_itog,self.choice)
         third_window.mainloop()
 class ThirdWindow(ctk.CTk):
+    """----------------------------Окно с выводом данных в основных сечениях камеры (Астра/Терра)----------------------------"""
     def __init__(self,formula_ox,formula_gor,p_k,p_a,alpha,km0,tech,H_gor,H_ok,alpha_itog,choice):
         super().__init__()
         self.formula_ox = formula_ox
@@ -652,6 +652,7 @@ class ThirdWindow(ctk.CTk):
         nozzle_window = NozzleWindow(self.I_a,self.F_kp,self.F_a,self.p_k)
         nozzle_window.mainloop()
 class NozzleWindow(ctk.CTk):
+    """----------------------------Окно с выбором параметров для построения сужающейся части----------------------------"""
     def __init__(self,I_a,F_kp,F_a,p_k):
         super().__init__()
         self.I_a=float(I_a)
@@ -872,6 +873,7 @@ class NozzleWindow(ctk.CTk):
         nozzle_subsonic_window = SubsonicWindow(self.R_1,self.R_2, self.R_ks,self.R_kp,self.alpha_rad_kon,self.aar)
         nozzle_subsonic_window.mainloop()
 class SubsonicWindow(ctk.CTk):
+    """----------------------------Окно с отрисовкой сужающейся части----------------------------"""
     def __init__(self, R_1,R_2,R_ks,R_kp,alpha_rad_kon,aar):
         super().__init__()
         self.R_1 = R_1
@@ -1011,6 +1013,7 @@ class SubsonicWindow(ctk.CTk):
         combustion_chamber_window = CombustionChamberWindow(self.p_k,self.R_k,self.T_k,self.m_sum,self.V_suzh,self.x_suzh, self.y_suzh,self.F_ks,self.F_kp,self.B)
         combustion_chamber_window.mainloop()
 class CombustionChamberWindow(ctk.CTk):
+    """----------------------------Окно с выбором времени пребывания для построения КС----------------------------"""
     def __init__(self, p_k,R_k,T_k,m_sum,V_suzh,x_suzh,y_suzh,F_ks,F_kp,B):
         super().__init__()
         self.p_k = p_k
@@ -1105,6 +1108,7 @@ class CombustionChamberWindow(ctk.CTk):
         nozzle_laval_window = LavalWindow(self.teta_a,self.teta_m,self.Rad_kp,self.Rad_a,self.x_dozv,self.y_dozv,self.L_ks)
         nozzle_laval_window.mainloop()
 class LavalWindow(ctk.CTk):
+    """----------------------------Окно с отрисовкой профилированного сопла Лаваля----------------------------"""
     def __init__(self, teta_a,teta_m,Rad_kp,Rad_a,x_dozv,y_dozv,L_ks):
         super().__init__()
         self.teta_a=teta_a
@@ -1175,6 +1179,7 @@ class LavalWindow(ctk.CTk):
         Graph_po_dline.mainloop()
         # sys.exit()
 class GraphWindow(ctk.CTk):
+    """----------------------------Окно с выводом всех основных параметров по длине сопла----------------------------"""
     def __init__(self,oxigen,fuel,p_k, p_a, alpha_itog, alpha_value,selected_option,formula_gor,formula_ox,H_gor,H_ok,p_kp):
         super().__init__()
 
@@ -1324,6 +1329,7 @@ class GraphWindow(ctk.CTk):
         Losses_window = LossesWindow(self.x_dzv,self.r_dzv,self.T_dozv,self.rho_dozv,self.R_dozv,self.k_dozv,self.w_dozv,self.F_dozv,self.x_svzv,self.M_dozv,self.r_sv,self.T_sv_array,self.rho_sv_array,self.R_sv_array,self.k_sv_array,self.w_sv_array,self.M_sv,self.F_sv_array)
         Losses_window.mainloop()
 class LossesWindow(ctk.CTk):
+    """----------------------------Окно, связанное с потерями и коническим соплом----------------------------"""
     def __init__(self,x_dzv,r_dzv,T_dozv,rho_dozv,R_dozv,k_dozv,w_dozv,F_dozv,x_svzv,M_dozv,r_sv,T_sv_array,rho_sv_array,R_sv_array,k_sv_array,w_sv_array,M_sv,F_sv_array):
         super().__init__()
 
