@@ -11,7 +11,6 @@ import numpy as np
 import math
 import customtkinter as ctk
 
-#ergbterghrtgrtg
 font_path = 'data/ofont.ru_Futura PT.ttf'
 font_props = font_manager.FontProperties(fname=font_path)
 if os.name == 'nt':
@@ -22,6 +21,7 @@ font1 = ("Futura PT Book", 16)
 custom_font = FontProperties(fname='data/ofont.ru_Futura PT.ttf', size=16)
 formatter = FuncFormatter(lambda x, _: f"{x:.2f}")
 def print_graph_R_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
+    """=====Построение графика газовой постоянной от к.и.о.====="""
     fig = Figure(figsize=(9,7), dpi=100)
     ax = fig.add_subplot(111)
     ax.set_facecolor('#171717') #171717
@@ -88,6 +88,7 @@ def print_graph_R_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
 
     canvas.draw()
 def print_graph_T_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
+    """=====Построение графика температуры от к.и.о.====="""
     fig = Figure(figsize=(9,7), dpi=100)
     ax = fig.add_subplot(111)
     ax.set_facecolor('#171717') #171717
@@ -151,6 +152,7 @@ def print_graph_T_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
 
     canvas.draw()
 def print_graph_I_opt(I_array,alpha_array,frame,x,alpha_opt,I_max,alpha_zad):
+    """=====Построение графика удельного пустотного импульса от к.и.о.====="""
     fig = Figure(figsize=(9,7), dpi=100)
     ax = fig.add_subplot(111)
     ax.set_facecolor('#171717') #171717
@@ -212,6 +214,7 @@ def print_graph_I_opt(I_array,alpha_array,frame,x,alpha_opt,I_max,alpha_zad):
 
     canvas.draw()
 def donut_diagramm(mass, max, master,x,y):
+    """=====Построение графика в виде круговой диаграммы====="""
     futura_pt = FontProperties(fname='data/ofont.ru_Futura PT.ttf')
     colors = ['#57A3FC', '#3468AC', '#285493', '#1A3D73', '#0F2A5A']
     el = [el[0] for el in mass[:max]]  # Названия элементов для легенды
@@ -254,6 +257,7 @@ def donut_diagramm(mass, max, master,x,y):
     master.grid_rowconfigure(0, weight=1)
     master.grid_columnconfigure(0, weight=1)
 def plot_partial_circle_with_line(radius, x0, y0, start_angle, end_angle, line_params, start_angle_2, end_angle_2, x02, y02, radius2,frame,R_kp,l,beta_grad,R_ks):
+    """=====Построение радиусно-конической сужающейся части====="""
     # Проверка на правильность задания углов
     if start_angle >= end_angle:
         raise ValueError("Начальный угол должен быть меньше конечного угла.")
@@ -267,9 +271,10 @@ def plot_partial_circle_with_line(radius, x0, y0, start_angle, end_angle, line_p
 
     x_circle_2 = x02 + radius2 * np.cos(angles_2)
     y_circle_2 = y02 + radius2 * np.sin(angles_2)
-
+    cos_beta=np.cos(np.radians(beta_grad))
+    sin_beta=np.sin(np.radians(beta_grad))
     # Вычисление координат прямой
-    x_line = np.linspace(l, -radius2 * np.cos(np.radians(beta_grad)), 10)
+    x_line = np.linspace(l, -radius2 * cos_beta, 10)
     y_line = -np.tan(np.radians(line_params['alpha'])) * (x_line + radius2 * np.cos(np.radians(line_params['beta']))) + \
              R_kp + radius2 - radius2 * np.sin(np.radians(line_params['beta']))
 
@@ -277,10 +282,10 @@ def plot_partial_circle_with_line(radius, x0, y0, start_angle, end_angle, line_p
     y_line_ks = np.linspace(0, R_ks, 2)
 
     x_line_o1 = [l] * 2
-    y_line_o1 = np.linspace(0, R_ks-radius+radius*np.sin(np.radians(beta_grad)), 2)
+    y_line_o1 = np.linspace(0, R_ks-radius+radius*sin_beta, 2)
 
-    x_line_o2 = [-radius2*np.cos(np.radians(beta_grad))] * 2
-    y_line_o2 = np.linspace(0, R_kp + radius2 - radius2 * np.sin(np.radians(beta_grad)), 2)
+    x_line_o2 = [-radius2*cos_beta] * 2
+    y_line_o2 = np.linspace(0, R_kp + radius2 - radius2 * sin_beta, 2)
 
     x_line_o3 = np.linspace(x0, 0, 2)
     y_line_o3 = [0] * 2
@@ -332,11 +337,10 @@ def plot_partial_circle_with_line(radius, x0, y0, start_angle, end_angle, line_p
 
     return x_total, y_total
 def plot_subsonic_nozzle_rr(R_ks,R_kp,R_1,R_2,beta_grad,alpha_grad,x_01,y_01,x_02,y_02,frame):
-
+    """=====Построение радиусной сужающейся части====="""
     # Генерация углов в указанном диапазоне
     angles = np.linspace(np.radians(beta_grad), np.radians(90), 100)
     angles_2 = np.linspace(np.radians(270 - alpha_grad), np.radians(270), 100)
-
     # Вычисление координат точек на окружности
     x_circle = x_01 + R_1 * np.cos(angles)[::-1]  # обратный порядок
     y_circle = y_01 + R_1 * np.sin(angles)[::-1]  # обратный порядок
@@ -344,11 +348,14 @@ def plot_subsonic_nozzle_rr(R_ks,R_kp,R_1,R_2,beta_grad,alpha_grad,x_01,y_01,x_0
     x_circle_2 = x_02 + R_2 * np.cos(angles_2)
     y_circle_2 = y_02 + R_2 * np.sin(angles_2)
 
+    cos_beta=np.cos(np.radians(beta_grad))
+    sin_beta=np.sin(np.radians(beta_grad))
+
     x_line_ks = [x_01] * 2
     y_line_ks = np.linspace(0, R_ks, 2)
 
-    x_line_o1 = [-R_2*np.cos(np.radians(beta_grad))] * 2
-    y_line_01 = np.linspace(0, R_kp + R_2 - R_2 * np.sin(np.radians(beta_grad)), 2)
+    x_line_o1 = [-R_2*cos_beta] * 2
+    y_line_01 = np.linspace(0, R_kp + R_2 - R_2 * sin_beta, 2)
 
     x_line_o2 = [0] * 2
     y_line_02 = np.linspace(0, R_kp , 2)
@@ -399,8 +406,7 @@ def plot_subsonic_nozzle_rr(R_ks,R_kp,R_1,R_2,beta_grad,alpha_grad,x_01,y_01,x_0
     return x_total, y_total
 
 def print_Combustion_Chamber(x_suzh,y_suzh,frame,L_ks):
-
-
+    """=====Построение камеры сгорания====="""
     fig = Figure(figsize=(9, 9), dpi=100)
     ax = fig.add_subplot(111)
     ax.set_aspect('equal', adjustable='box')
@@ -467,15 +473,17 @@ def print_Combustion_Chamber(x_suzh,y_suzh,frame,L_ks):
     canvas_widget.place(x=100,y=657)
     return x_total,y_total
 def plot_nozzle_laval(R_kp,R_a,beta_m,beta_a,frame,a,b,c,x_dozv,y_dozv,L_ks):
+    """=====Построение профиилированного сопла Лаваля====="""
     R_3 = R_kp * 0.45
     x_01=0
     y_01=R_kp+R_3
     alpha_m=90-beta_m
     alpha_a = 90 - beta_a
-    beta_m_rad=math.pi * beta_m / 180
-    beta_a_rad=math.pi * beta_a / 180
-    alpha_m_rad =math.pi * alpha_m / 180
-    alpha_a_rad =math.pi * alpha_a / 180
+    pi=math.pi
+    beta_m_rad=pi * beta_m / 180
+    beta_a_rad=pi * beta_a / 180
+    alpha_m_rad =pi * alpha_m / 180
+    alpha_a_rad =pi * alpha_a / 180
     # Генерация углов в указанном диапазоне
     angles= np.linspace(np.radians(270), np.radians(270+beta_m), 20)
     # Вычисление координат точек на окружности
@@ -557,6 +565,7 @@ def plot_nozzle_laval(R_kp,R_a,beta_m,beta_a,frame,a,b,c,x_dozv,y_dozv,L_ks):
     canvas_widget.place(x=10,y=50)
     return x_total, y_total,x_sv,y_sv
 def print_graph_p_x(x,y,l,frame,x_0,y_0,label_all,label_x,label_y):
+    """=====Построение графика изменения основных параметров в зависимости от длины====="""
     x_line_1 = np.linspace(x[0]-l, x[0], 2)
     y_line_1 = [y[0]] * 2
 
@@ -600,6 +609,7 @@ def print_graph_p_x(x,y,l,frame,x_0,y_0,label_all,label_x,label_y):
 
     canvas.draw()
 def print_graph_phi_x(y_1,y_2,y_3,x,frame,x_0,y_0,label_all,label_x,label_y):
+    """=====Построение графика изменения потерь в зависимости от угла полураскрытия конической расширяющейся части====="""
     fig = Figure(figsize=(9, 7), dpi=100)
     ax = fig.add_subplot(111)
     ax.set_facecolor('#171717')  # 171717
@@ -640,14 +650,15 @@ def print_graph_phi_x(y_1,y_2,y_3,x,frame,x_0,y_0,label_all,label_x,label_y):
 
     canvas.draw()
 def print_graph_kon(x,y_1,l,beta,r_a,r_kp,frame,x_0,y_0,label_all,label_x,label_y,x_sv,y_sv):
+    """=====Построение конического и профиллированного сопла====="""
     x_line_1 = np.linspace(x[0] - l, x[0], 2)
     y_line_1 = [y_1[0]] * 2
     y_line_1_1 = [-(y_1[0])] * 2
-
-    x_line_2 = np.linspace(0, ((r_a-r_kp)/math.tan(beta*math.pi/180)), 2)
+    tg_beta=math.tan(beta*math.pi/180)
+    x_line_2 = np.linspace(0, ((r_a-r_kp)/tg_beta), 2)
     y_line_2 = np.linspace(r_kp, r_a, 2)
 
-    x_line_3 = np.linspace(x[0] - l, ((r_a - r_kp) / math.tan(beta * math.pi / 180)), 2)
+    x_line_3 = np.linspace(x[0] - l, ((r_a - r_kp) / tg_beta), 2)
     y_line_3 = [0] * 2
 
     x_line_4 = [x[0]] * 2
@@ -660,7 +671,7 @@ def print_graph_kon(x,y_1,l,beta,r_a,r_kp,frame,x_0,y_0,label_all,label_x,label_
     y_line_6 = np.linspace(0, y_1[0], 2)
     y_line_6_1 = -(np.linspace(0, y_1[0], 2))
 
-    x_line_7 = [((r_a-r_kp)/math.tan(beta*math.pi/180))] * 2
+    x_line_7 = [((r_a-r_kp)/tg_beta)] * 2
     y_line_7 = np.linspace(0, r_a, 2)
 
     x_line_7_1 = [x_sv[-1]] * 2
@@ -700,7 +711,7 @@ def print_graph_kon(x,y_1,l,beta,r_a,r_kp,frame,x_0,y_0,label_all,label_x,label_
 
     # Определение пределов осей
     x_min = (x[0] - l) * 1.05
-    x_max = ((r_a-r_kp)/math.tan(beta*math.pi/180))*1.05
+    x_max = ((r_a-r_kp)/tg_beta)*1.05
     y_min = -10
     y_max = (r_a) * 1.05
 
