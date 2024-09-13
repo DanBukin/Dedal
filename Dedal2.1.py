@@ -400,19 +400,19 @@ class SecondWindow(ctk.CTk):
         user.alpha_itog=self.alpha_itog
     def but_exel(self):
         """=====Создание кнопок====="""
-        self.button1_I_exel = ctk.CTkButton(master=self.scrollbar_frame,text="Excel",width=60,command=lambda: save_to_excel_I_a(self.I_array, self.alph_array))
+        self.button1_I_exel = ctk.CTkButton(master=self.scrollbar_frame,text="Excel",width=60,command=lambda: save_to_excel(self.I_array, self.alph_array,'Коэффициент избытка оксилителя','Импульс'))
         self.button1_I_exel.place(x=615,y=460)
-        self.button1_I_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt_I_a(self.I_array, self.alph_array))
+        self.button1_I_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt(self.I_array, self.alph_array))
         self.button1_I_txt.place(x=620, y=490)
 
-        self.button1_T_exel = ctk.CTkButton(master=self.scrollbar_frame, text="Excel", width=60,command=lambda: save_to_excel_T_a(self.T_array, self.alph_array))
+        self.button1_T_exel = ctk.CTkButton(master=self.scrollbar_frame, text="Excel", width=60,command=lambda: save_to_excel(self.T_array, self.alph_array,'Коэффициент избытка оксилителя','Температура'))
         self.button1_T_exel.place(x=615, y=910)
-        self.button1_T_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt_T_a(self.T_array, self.alph_array))
+        self.button1_T_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt(self.T_array, self.alph_array))
         self.button1_T_txt.place(x=620, y=940)
 
-        self.button1_R_exel = ctk.CTkButton(master=self.scrollbar_frame, text="Excel", width=60,command=lambda: save_to_excel_R_a(self.R_array, self.alph_array))
+        self.button1_R_exel = ctk.CTkButton(master=self.scrollbar_frame, text="Excel", width=60,command=lambda: save_to_excel(self.R_array, self.alph_array,'Коэффициент избытка оксилителя','Газовая постоянная'))
         self.button1_R_exel.place(x=615, y=1365)
-        self.button1_R_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt_R_a(self.R_array, self.alph_array))
+        self.button1_R_txt = ctk.CTkButton(master=self.scrollbar_frame, text="txt", width=50,command=lambda: save_to_txt(self.R_array, self.alph_array))
         self.button1_R_txt.place(x=620, y=1395)
 
         self.but_back = ctk.CTkButton(master=self.scrollbar_frame, text="Назад", width=100,command=lambda: self.back_window())
@@ -1004,19 +1004,19 @@ class SubsonicWindow(ctk.CTk):
         """=====Создание кнопок (вариант 1)====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 20, 420)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 20, 450)
-        self.button1 = create_button(self.frame0, "Сохранить параметры в txt", lambda: save_options_subsonic_txt(self.options_rr), self.font1,250, 2, 285)
-        self.button2 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_geom_subsonic_exel(self.x_rr,self.y_rr), self.font1,250, 2, 315)
-        self.button3 = create_button(self.frame0, "Сохранить сопло в txt",lambda: save_geom_subsonic_txt(self.x_rr,self.y_rr), self.font1, 250,2, 345)
+        self.button1 = create_button(self.frame0, "Сохранить параметры в txt", lambda: save_properties_txt(self.options_rr), self.font1,250, 2, 285)
+        self.button2 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_to_excel(self.x_rr,self.y_rr,"X","Y"), self.font1,250, 2, 315)
+        self.button3 = create_button(self.frame0, "Сохранить сопло в txt",lambda: save_to_txt(self.x_rr,self.y_rr), self.font1, 250,2, 345)
     def place_button_2(self):
         """=====Создание кнопок (вариант 2)====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 1020)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 750, 1050)
-        self.button1 = create_button(self.frame0, "Сохранить параметры в txt",lambda: save_options_subsonic_txt(self.options_rr), self.font1,250, 2, 285)
-        self.button2 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_geom_subsonic_exel(self.x_rr,self.y_rr), self.font1,250, 2, 315)
-        self.button3 = create_button(self.frame0, "Сохранить сопло в txt", lambda:save_geom_subsonic_txt(self.x_rr,self.y_rr), self.font1, 250,2, 345)
-        self.button4 = create_button(self.frame0, "Сохранить параметры в txt", lambda: save_options_subsonic_txt(self.options_rk), self.font1,250, 2, 790)
-        self.button5 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_geom_subsonic_exel(self.x_rk,self.y_rk), self.font1,250, 2, 820)
-        self.button6 = create_button(self.frame0, "Сохранить сопло в txt",lambda:save_geom_subsonic_txt(self.x_rk,self.y_rk), self.font1, 250,2, 850)
+        self.button1 = create_button(self.frame0, "Сохранить параметры в txt",lambda: save_properties_txt(self.options_rr), self.font1,250, 2, 285)
+        self.button2 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_to_excel(self.x_rr,self.y_rr,"X","Y"), self.font1,250, 2, 315)
+        self.button3 = create_button(self.frame0, "Сохранить сопло в txt", lambda:save_to_txt(self.x_rr,self.y_rr), self.font1, 250,2, 345)
+        self.button4 = create_button(self.frame0, "Сохранить параметры в txt", lambda: save_properties_txt(self.options_rk), self.font1,250, 2, 790)
+        self.button5 = create_button(self.frame0, "Сохранить сопло в excel", lambda: save_to_excel(self.x_rk,self.y_rk,"X","Y"), self.font1,250, 2, 820)
+        self.button6 = create_button(self.frame0, "Сохранить сопло в txt",lambda:save_to_txt(self.x_rk,self.y_rk), self.font1, 250,2, 850)
     def print_subsonic_nozzle_rk(self):
         """=====Отрисовка радиусно-конического сопла====="""
         self.x_rk,self.y_rk=place_subsonic_nozzle_rk(self.R_ks, self.R_kp,self.R_1, self.R_2,self.alpha_rad_kon,self.frame0)
@@ -1226,10 +1226,10 @@ class LavalWindow(ctk.CTk):
     def place_button(self):
         """=====Создание кнопок====="""
         self.save_nozzle = create_button(self.frame0, "Сохранить в excel",
-                                         lambda: save_to_excel_laval(self.x_total, self.y_total), self.font1, 100, 50,
+                                         lambda: save_to_excel(self.x_total, self.y_total,"X","R"), self.font1, 100, 50,
                                          840)
         self.save_nozzle_txt = create_button(self.frame0, "Сохранить в txt",
-                                             lambda: save_to_txt_laval(self.x_total, self.y_total), self.font1, 100,
+                                             lambda: save_to_txt(self.x_total, self.y_total), self.font1, 100,
                                              50, 870)
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 840)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 750, 870)
@@ -1314,21 +1314,21 @@ class GraphWindow(ctk.CTk):
         """=====Создание кнопок====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 735, 3220)
         self.close_button = create_button(self.frame0, "Далее", lambda: self.close_window(), self.font1, 80, 735, 3250)
-        self.save_exel_1 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.p_graph), self.font1, 70,660, 390)
-        self.save_exel_2 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.T_array), self.font1, 70, 660,850)
-        self.save_exel_3 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.rho_array), self.font1, 70, 660,1330)
-        self.save_exel_4 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.w_array), self.font1, 70, 660,1800)
-        self.save_exel_5 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.M_array), self.font1, 70, 660,2260)
-        self.save_exel_6 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.labda_w), self.font1, 70, 660,2740)
-        self.save_exel_7 = create_button(self.frame0, "Excel",lambda: save_to_excel_param(self.x_graph, self.rw), self.font1, 70, 660,3200)
+        self.save_exel_1 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.p_graph,"X","Y"), self.font1, 70,660, 390)
+        self.save_exel_2 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.T_array,"X","Y"), self.font1, 70, 660,850)
+        self.save_exel_3 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.rho_array,"X","Y"), self.font1, 70, 660,1330)
+        self.save_exel_4 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.w_array,"X","Y"), self.font1, 70, 660,1800)
+        self.save_exel_5 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.M_array,"X","Y"), self.font1, 70, 660,2260)
+        self.save_exel_6 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.labda_w,"X","Y"), self.font1, 70, 660,2740)
+        self.save_exel_7 = create_button(self.frame0, "Excel",lambda: save_to_excel(self.x_graph, self.rw,"X","Y"), self.font1, 70, 660,3200)
 
-        self.save_txt_1 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.p_graph),self.font1, 40, 675, 420)
-        self.save_txt_2 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.T_array),self.font1, 40, 675, 880)
-        self.save_txt_3 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.rho_array),self.font1, 40, 675, 1360)
-        self.save_txt_4 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.w_array),self.font1, 40, 675, 1830)
-        self.save_txt_5 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.M_array),self.font1, 40, 675, 2290)
-        self.save_txt_6 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.labda_w),self.font1, 40, 675, 2770)
-        self.save_txt_7 = create_button(self.frame0, "txt", lambda: save_to_txt_param(self.x_graph, self.rw),self.font1, 40, 675, 3230)
+        self.save_txt_1 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.p_graph),self.font1, 40, 675, 420)
+        self.save_txt_2 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.T_array),self.font1, 40, 675, 880)
+        self.save_txt_3 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.rho_array),self.font1, 40, 675, 1360)
+        self.save_txt_4 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.w_array),self.font1, 40, 675, 1830)
+        self.save_txt_5 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.M_array),self.font1, 40, 675, 2290)
+        self.save_txt_6 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.labda_w),self.font1, 40, 675, 2770)
+        self.save_txt_7 = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_graph, self.rw),self.font1, 40, 675, 3230)
     def calculation_dozv(self):
         """=====Расчёт основных параметров в дозвуковой и сверхзвуковой частях и отображение графиков====="""
         self.T_dozv_array_0, self.rho_dozv_array_0, self.R_dozv_array_0, self.k_dozv_array_0, self.w_dozv_array_0, self.F_dozv_array_0 = raschet_dozv(
@@ -1470,11 +1470,11 @@ class LossesWindow(ctk.CTk):
         """=====Создание кнопок====="""
         self.back_button = create_button(self.frame0, "Назад", lambda: self.back_window(), self.font1, 80, 750, 1530)
         self.close_button = create_button(self.frame0, "Выход", lambda: self.close_window(), self.font1, 80, 750, 1560)
-        self.but_save_txt_optoins = create_button(self.frame0, "txt", lambda: save_txt_poteri(self.text), self.font1, 80, 700, 190)
+        self.but_save_txt_optoins = create_button(self.frame0, "txt", lambda: save_properties_txt(self.text), self.font1, 80, 700, 190)
         self.but_save_txt_poteri = create_button(self.frame0, "txt", lambda: save_txt_graph_poteri(self.phi_r,self.phi_tr,self.phi_s, self.beta_kon_grad), self.font1, 80, 700, 600)
         self.but_save_excel_poteri = create_button(self.frame0, "excel", lambda: save_excel_graph_poteri(self.phi_r,self.phi_tr,self.phi_s, self.beta_kon_grad), self.font1, 80, 700, 630)
-        self.but_save_txt_kon = create_button(self.frame0, "txt", lambda: save_txt_konus(self.x_total_kon,self.y_total_kon), self.font1, 80, 20,1530)
-        self.but_save_excel_kon = create_button(self.frame0, "excel", lambda: save_excel_konus(self.x_total_kon,self.y_total_kon), self.font1, 80,20, 1560)
+        self.but_save_txt_kon = create_button(self.frame0, "txt", lambda: save_to_txt(self.x_total_kon,self.y_total_kon), self.font1, 80, 20,1530)
+        self.but_save_excel_kon = create_button(self.frame0, "excel", lambda: save_to_excel(self.x_total_kon,self.y_total_kon,"X","R"), self.font1, 80,20, 1560)
     def poteri_dozvuk(self):
         """=====Расчёт потерь в дозвуковой части====="""
         self.beta_j_dozv=find_angle(self.x_dzv,self.r_dzv)
