@@ -1,6 +1,7 @@
 from dedal_functions import *
 from dedal_thermodynamics import *
 from dedal_graphs import *
+from dedal_customtkinter import *
 import json
 import sys
 import math
