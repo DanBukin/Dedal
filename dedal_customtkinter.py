@@ -15,6 +15,7 @@ font0 = ("Futura PT Book", 18)
 font1 = ("Futura PT Book", 16)
 font2 = ("Futura PT Book", 14)
 def create_frame(parent,wight, height, x, y, fg_color, bg_color):
+    """=====Быстрое создание мини-окон====="""
     frame = ctk.CTkFrame(master=parent,width=wight, height=height, fg_color=fg_color, bg_color=bg_color)
     frame.place(x=x, y=y)
     return frame
