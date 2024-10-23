@@ -1364,7 +1364,7 @@ class LavalWindow(ctk.CTk):
         self.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
 
         ctk.set_appearance_mode("Dark")  # Настройка темы
-        ctk.set_default_color_theme("blue")  # Цветовая палитра
+        ctk.set_default_color_theme("blue")
         ctk.set_widget_scaling(1.5)  # Увеличение размера виджетов
 
         self.place_scrollbar()
