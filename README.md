@@ -1,6 +1,7 @@
 # DEDAL
 
-![wings (3)](https://github.com/DanBukin/Dedal/assets/161983114/924e0fad-ecfc-45b5-bae1-0a088cc605d2)
+![wings (5)](https://github.com/user-attachments/assets/041c7536-0520-4b3b-b547-0f4501a3335b)
+
 
 Цель проекта:
 
