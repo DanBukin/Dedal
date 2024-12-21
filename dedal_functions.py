@@ -37,7 +37,20 @@ def find_teta_m(w_a,T_kp,R,k,k_kp):
     psi_lambda=k_1*k_2-k_3
     teta_m_1=(psi_lambda/3)*180/math.pi
     return teta_m_1
-
+def find_l_sv(k_a,lambda_a,R_a,R_kp):
+    """=====Поиск длины расширающейся части (формулы 10.64,10.65,10.66,10.67 Кудрявцева)====="""
+    x_1=math.sqrt( (k_a+1)/(k_a-1) )
+    x_2=np.arctan(math.sqrt((k_a-1)/(k_a+1))*math.sqrt( ( (lambda_a**2)-1 )/ (1-( ((k_a-1)*lambda_a**2)/(k_a+1) )) ))
+    x_3=np.arctan(math.sqrt( ( (lambda_a**2)-1 )/ (1-( ((k_a-1)*lambda_a**2)/(k_a+1) )) ))
+    psi=x_1*x_2-x_3
+    beta=(1/3)*psi
+    y_a_otn=R_a/R_kp
+    x_a_otn=(y_a_otn+1)*math.sqrt(1-(1/(y_a_otn**2)))
+    alpha_A=1/x_3
+    x_AB_otn=y_a_otn/np.tan(alpha_A)
+    x_0_otn=x_a_otn+x_AB_otn
+    x_0=x_0_otn*R_kp
+    return beta,x_0
 def find_angle(x_array,y_array):
     """=====Функция, которая находит угол в каждой точке из массива координат профиллированного сопла====="""
     length = len(x_array)-1
@@ -190,20 +203,7 @@ def find_volume_rk(R_ks,R_kp,R_1,R_2,beta_grad):
     resylt_int_3 = math.pi * int_okr_3
     result_int_sum = (resylt_int_1 + resylt_int_2+resylt_int_3)/1000000000
     return result_int_sum
-def find_l_sv(k_a,lambda_a,R_a,R_kp):
-    """=====Поиск длины расширающейся части (формулы 10.64,10.65,10.66,10.67 Кудрявцева)====="""
-    x_1=math.sqrt( (k_a+1)/(k_a-1) )
-    x_2=np.arctan(math.sqrt((k_a-1)/(k_a+1))*math.sqrt( ( (lambda_a**2)-1 )/ (1-( ((k_a-1)*lambda_a**2)/(k_a+1) )) ))
-    x_3=np.arctan(math.sqrt( ( (lambda_a**2)-1 )/ (1-( ((k_a-1)*lambda_a**2)/(k_a+1) )) ))
-    psi=x_1*x_2-x_3
-    beta=(1/3)*psi
-    y_a_otn=R_a/R_kp
-    x_a_otn=(y_a_otn+1)*math.sqrt(1-(1/(y_a_otn**2)))
-    alpha_A=1/x_3
-    x_AB_otn=y_a_otn/np.tan(alpha_A)
-    x_0_otn=x_a_otn+x_AB_otn
-    x_0=x_0_otn*R_kp
-    return beta,x_0
+
 def find_coord_peresech(x_1,x_2,y_1,y_2,alpha,beta):
     """=====Поиск координаты промежуточной точки для построения кривой Безье====="""
     L=x_2-x_1

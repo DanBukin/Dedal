@@ -2,6 +2,7 @@ from dedal_functions import *
 from dedal_thermodynamics import *
 from dedal_customtkinter import *
 from dedal_save_properties import *
+from dedal_table_kudr import *
 import json
 import sys
 import math
@@ -1325,20 +1326,21 @@ class CombustionChamberWindow(ctk.CTk):
     def close_window(self):
         """=====Переход в следующее окно====="""
         self.teta_a=find_teta_a(float(user.p_a),float(user.p_k))
-        self.teta_m = find_teta_m(float(user.w_a),float(user.T_kp),float(user.R_kp),float(user.k_a),float(user.k_kp))
+        # self.teta_m = find_teta_m(float(user.w_a),float(user.T_kp),float(user.R_kp),float(user.k_a),float(user.k_kp))
         self.Rad_kp=user.Rad_kp
         self.Rad_a=user.Rad_a
+        self.teta_m, self.l_ras_otn = find_teta_m_1(self.Rad_a / self.Rad_kp, float(user.k_a), self.teta_a)
         user.teta_a = self.teta_a
         user.L_ks = self.L_ks
         user.teta_m=self.teta_m
         user.x_dozv=self.x_dozv
         user.y_dozv=self.y_dozv
         self.destroy()
-        nozzle_laval_window = LavalWindow(self.teta_a,self.teta_m,self.Rad_kp,self.Rad_a,self.x_dozv,self.y_dozv,self.L_ks)
+        nozzle_laval_window = LavalWindow(self.teta_a,self.teta_m,self.Rad_kp,self.Rad_a,self.x_dozv,self.y_dozv,self.L_ks,self.l_ras_otn)
         nozzle_laval_window.mainloop()
 class LavalWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой профилированного сопла Лаваля----------------------------"""
-    def __init__(self, teta_a,teta_m,Rad_kp,Rad_a,x_dozv,y_dozv,L_ks):
+    def __init__(self, teta_a,teta_m,Rad_kp,Rad_a,x_dozv,y_dozv,L_ks,l_ras_otn):
         """=====Начальные значения атрибутов класса====="""
         super().__init__()
         self.teta_a=teta_a
@@ -1348,6 +1350,7 @@ class LavalWindow(ctk.CTk):
         self.x_dozv=x_dozv
         self.y_dozv=y_dozv
         self.L_ks=L_ks
+        self.l_ras_otn=l_ras_otn
 
         self.font1 = ("Futura PT Book", 16)  # Настройка пользовательского шрифта 1
         self.font2 = ("Futura PT Book", 14)  # Настройка пользовательского шрифта 2
@@ -1373,7 +1376,8 @@ class LavalWindow(ctk.CTk):
         self.a_kp=math.sqrt(user.k_kp*user.R_kp*user.T_kp)
         self.lambda_a=user.w_a/self.a_kp
         user.lambda_a=self.lambda_a
-        self.beta,self.L_sv=find_l_sv(user.k_a,self.lambda_a,user.Rad_a,user.Rad_kp)
+        self.beta=self.teta_m
+        self.L_sv=self.l_ras_otn*user.Rad_kp
         self.x_total, self.y_total,self.x_sv,self.y_sv=plot_nozzle_laval(self.Rad_kp, self.Rad_a, np.rad2deg(self.beta), self.teta_a, self.frame0,self.x_dozv,self.y_dozv,self.L_ks,self.L_sv)
         user.x_sv=self.x_sv
         user.y_sv =self.y_sv
@@ -1401,7 +1405,8 @@ class LavalWindow(ctk.CTk):
         self.label = create_label_0(self.frame0, "Проектирование сопла прошло успешно, поздравляем!", 100, 10)
         self.label_1 = create_label_0(self.frame0, f"β_m={np.rad2deg(self.beta):.2f}°", 10, 840)
         self.label_2 = create_label_0(self.frame0, f"β_a={self.teta_a:.2f}°", 10, 870)
-        self.label_3 = create_label_0(self.frame0, f"Длина расш. части равна: {self.x_total[-1]:.2f} мм.", 150, 855)
+        self.label_3 = create_label_0(self.frame0, f"Относит. длина расш. части равна: {self.l_ras_otn:.2f} мм.", 150, 840)
+        self.label_4 = create_label_0(self.frame0, f"Длина расш. части равна: {self.x_total[-1]:.2f} мм.", 150, 870)
     def place_button(self):
         """=====Создание кнопок====="""
         self.save_nozzle = create_button(self.frame0, "Сохранить в excel",
