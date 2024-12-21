@@ -1,4 +1,5 @@
 from dedal_graphs import *
+from dedal_table_kudr import *
 import scipy
 
 def find_teta_a(p_a,p_k):
@@ -283,7 +284,10 @@ def model_ks_d(tau_pr, R_k, T_k, F_kp_d, B, V_suzh_d,F_ks_d,x_sush,y_suzh):
     y_total.append(y_suzh[0])
     return x_total, y_total
 def model_sv_d(k_a, lambda_a, R_a, R_kp,beta_a):
-    beta_m, L_sv = find_l_sv(k_a, lambda_a, R_a, R_kp)
+
+    R_otn=R_a/R_kp
+    beta_m, L_sv_0=find_teta_m_1(R_otn, k_a, beta_a)
+    L_sv=L_sv_0*R_kp
     beta_m=np.rad2deg(beta_m)
     R_3 = R_kp * 0.45
     x_01 = 0
