@@ -480,7 +480,7 @@ class DedalApp(ctk.CTk):
         else:
             self.alpha = "Оптимальный"
         if self.lbr==1:
-            gas = ct.Solution('gri30.yaml')
+            gas = ct.Solution('gri30_highT.yaml')
             print(self.formula_gor)
             self.alpha_value=gas.stoich_air_fuel_ratio(self.formula_gor, self.formula_ox, basis='mass')
             print(self.alpha_value)
