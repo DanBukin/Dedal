@@ -49,7 +49,7 @@ def print_graph_R_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
         label1 = ctk.CTkLabel(master=frame,
                               text=f'R_опт = {round(T_opt)} Дж/кг*К \nR_зад = {round(T_zad)} Дж/кг*К \nα_опт = {alpha_opt} \nα_зад = {alpha_zad}',
                               font=font1)
-        label1.grid(row=6, column=1, sticky='w', padx=0, pady=0)
+        label1.grid(row=7, column=1, sticky='w', padx=0, pady=0)
 
 
     else:
@@ -61,7 +61,7 @@ def print_graph_R_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
         label1 = ctk.CTkLabel(master=frame,
                               text=f'R_опт = {round(T_opt)} Дж/кг*К \nα_опт = {alpha_opt}',
                               font=font1)
-        label1.grid(row=6, column=1, sticky='w', padx=0, pady=0)
+        label1.grid(row=7, column=1, sticky='w', padx=0, pady=0)
 
 
     ax.set_xlabel('Коэффициент избытка окислителя', fontsize=16, fontproperties=font_props, color='white',)
@@ -84,7 +84,7 @@ def print_graph_R_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
     fig.subplots_adjust(left=0.22, bottom=0.1, right=0.97, top=0.95)
     canvas = FigureCanvasTkAgg(fig, master=frame)  # frame - это контейнер, где должен быть размещен график
     canvas_widget = canvas.get_tk_widget()
-    canvas_widget.grid(row=6, column=0, padx=0, pady=0)
+    canvas_widget.grid(row=7, column=0, padx=0, pady=0)
 
     canvas.draw()
 def print_graph_T_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
@@ -115,7 +115,7 @@ def print_graph_T_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
         label1 = ctk.CTkLabel(master=frame,
                               text=f'T_опт = {round(T_opt)} K \nT_зад = {round(T_zad)} K \nα_опт = {alpha_opt} \nα_зад = {alpha_zad}',
                               font=font1)
-        label1.grid(row=5, column=1, sticky='w', padx=0, pady=0)
+        label1.grid(row=6, column=1, sticky='w', padx=0, pady=0)
 
     else:
         ax.plot(alpha_opt, T_opt, 'o', color='#96cdff', markersize=10)  # 'o' - это маркер круглой формы
@@ -125,7 +125,7 @@ def print_graph_T_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
         label1 = ctk.CTkLabel(master=frame,
                               text=f'T_опт = {round(T_opt)} K \nα_опт = {alpha_opt}',
                               font=font1)
-        label1.grid(row=5, column=1, sticky='w', padx=0, pady=0)
+        label1.grid(row=6, column=1, sticky='w', padx=0, pady=0)
 
 
     ax.set_xlabel('Коэффициент избытка окислителя', fontsize=16, fontproperties=font_props, color='white',)
@@ -148,7 +148,7 @@ def print_graph_T_opt(T_array,alpha_array,frame,x,alpha_opt,T_opt,alpha_zad):
     fig.subplots_adjust(left=0.13, bottom=0.1, right=0.97, top=0.95)
     canvas = FigureCanvasTkAgg(fig, master=frame)  # frame - это контейнер, где должен быть размещен график
     canvas_widget = canvas.get_tk_widget()
-    canvas_widget.grid(row=5, column=0, padx=0, pady=0)
+    canvas_widget.grid(row=6, column=0, padx=0, pady=0)
 
     canvas.draw()
 def print_graph_I_opt(I_array,alpha_array,frame,x,alpha_opt,I_max,alpha_zad):
@@ -178,7 +178,7 @@ def print_graph_I_opt(I_array,alpha_array,frame,x,alpha_opt,I_max,alpha_zad):
         ax.vlines(x=alpha_opt, ymin=min(I_array) * 0.98, ymax=I_max, color='#96cdff', linewidth=2, linestyle='--')
 
         label1 = ctk.CTkLabel(master=frame, text=f'I_опт = {round(I_max)}м/с \nI_зад = {round(I_zad)}м/с \nα_опт = {alpha_opt} \nα_зад = {alpha_zad}',font=font1)
-        label1.grid(row=4, column=1, sticky='w', padx=0, pady=0)
+        label1.grid(row=5, column=1, sticky='w', padx=0, pady=0)
 
     else:
         ax.plot(alpha_opt, I_max, 'o', color='#96cdff', markersize=10)  # 'o' - это маркер круглой формы
@@ -186,7 +186,7 @@ def print_graph_I_opt(I_array,alpha_array,frame,x,alpha_opt,I_max,alpha_zad):
         ax.vlines(x=alpha_opt, ymin=min(I_array) * 0.98, ymax=I_max, color='#96cdff', linewidth=2, linestyle='--')
 
         label1 = ctk.CTkLabel(master=frame,text=f'I_опт = {round(I_max)}м/с \nα_опт = {alpha_opt}',font=font1)
-        label1.grid(row=4, column=1, sticky='w', padx=0, pady=0)
+        label1.grid(row=5, column=1, sticky='w', padx=0, pady=0)
 
 
     ax.set_xlabel('Коэффициент избытка окислителя', fontsize=16, fontproperties=font_props, color='white',)
@@ -210,7 +210,7 @@ def print_graph_I_opt(I_array,alpha_array,frame,x,alpha_opt,I_max,alpha_zad):
     fig.subplots_adjust(left=0.15, bottom=0.1, right=0.97, top=0.95)
     canvas = FigureCanvasTkAgg(fig, master=frame)  # frame - это контейнер, где должен быть размещен график
     canvas_widget = canvas.get_tk_widget()
-    canvas_widget.grid(row=4, column=0, padx=30, pady=0,sticky='w')
+    canvas_widget.grid(row=5, column=0, padx=30, pady=0,sticky='w')
 
     canvas.draw()
 def donut_diagramm(mass, max, master,x,y):

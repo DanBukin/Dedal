@@ -193,6 +193,9 @@ class DedalApp(ctk.CTk):
         self.label_fuel = None
         self.oxigen = None
         self.fuel = None
+        self.frame_L_1=None
+        self.label_L_1=None
+        self.lbr = 0
 
         # Настройка интерфейса
         self.setup_frame()
@@ -230,7 +233,8 @@ class DedalApp(ctk.CTk):
     def update_enthalpy(self):
         """=====Появляние и исчезновение объектов в заисимости от выбора пользователя====="""
         self.selected_substance_oxigen = self.combobox1.get()  # Получаем выбранный окислитель
-        self.selected_substance_fuel = self.combobox2.get()  # Получаем выбранное горючее
+        if self.lbr==0:
+            self.selected_substance_fuel = self.combobox2.get()  # Получаем выбранное горючее
 
         # Получаем данные для выбранного окислителя
         oxigen_data = substances_data.get(self.selected_substance_oxigen, {})
@@ -239,10 +243,11 @@ class DedalApp(ctk.CTk):
         self.enthalpy_value_oxigen = f"{self.H_ok} кДж/кг" if self.H_ok is not None else ""
 
         # Аналогично для горючего
-        fuel_data = substances_data_1.get(self.selected_substance_fuel, {})
-        self.formula_gor = fuel_data.get('formula', None)
-        self.H_gor = fuel_data.get('H', None)
-        self.enthalpy_value_fuel = f"{self.H_gor} кДж/кг" if self.H_gor is not None else ""
+        if self.lbr == 0:
+            fuel_data = substances_data_1.get(self.selected_substance_fuel, {})
+            self.formula_gor = fuel_data.get('formula', None)
+            self.H_gor = fuel_data.get('H', None)
+            self.enthalpy_value_fuel = f"{self.H_gor} кДж/кг" if self.H_gor is not None else ""
 
 
         # Обновляем или создаем лейблы для оксидов и горючих веществ
@@ -251,10 +256,11 @@ class DedalApp(ctk.CTk):
         else:
             self.label_oxigen = create_label(self.frame3, self.enthalpy_value_oxigen, 20, 80)
 
-        if self.label_fuel:
-            self.label_fuel.configure(text=self.enthalpy_value_fuel)
-        else:
-            self.label_fuel = create_label(self.frame4, self.enthalpy_value_fuel, 20, 80)
+        if self.lbr == 0:
+            if self.label_fuel:
+                self.label_fuel.configure(text=self.enthalpy_value_fuel)
+            else:
+                self.label_fuel = create_label(self.frame4, self.enthalpy_value_fuel, 20, 80)
 
         # Показываем лейблы
         if self.auto_fill_var.get() == 1:  # Если чекбокс "Авто" нажат
@@ -311,17 +317,97 @@ class DedalApp(ctk.CTk):
     def setup_combobox(self):
         """=====Создание ячеек с компонентами====="""
         self.combobox1 = ctk.CTkComboBox(self.frame3,values=["", "Кислород", "Озон", "АК", "АК-27", "АТ", "Перекись водорода", "Воздух"],command=self.combobox_callback1, font=self.font2, width=170)
-        self.combobox2 = ctk.CTkComboBox(self.frame4,values=["", "Водород", "НДМГ", "Метан", "Аммиак", "Керосин РГ-1", "Керосин Т-1","Керосин RP-1", "Синтин", "Боктан", "Этанол", "ММГ", "Гидразин", "Анилин","Триэтиламин", "Ксилидин", ], command=self.combobox_callback2, font=self.font2,width=170)
+        self.combobox2 = ctk.CTkComboBox(self.frame4,values=["", "Водород", "НДМГ", "Метан", "Аммиак", "Керосин РГ-1", "Керосин Т-1","Керосин RP-1", "Синтин", "Боктан", "Этанол", "ММГ", "Гидразин", "Анилин","Триэтиламин", "Ксилидин","Водород + Метан" ], command=self.combobox_callback2, font=self.font2,width=170)
         self.combobox1.place(x=5, y=25)
         self.combobox2.place(x=5, y=25)
     def combobox_callback1(self,value):
         """=====Функиця, связанная с сохранением выбранного окислителя====="""
         self.oxigen = value
         self.periodic_check()
+    def change_slider_1(self,value):
+        self.H2_percent = float(value)
+        self.CH4_percent = 100-float(value)
+        self.slider_L_2.set(100-value)
+        self.label_L_1.configure(text=f"Доля Водорода: {self.H2_percent:.0f} %")
+        self.label_L_2.configure(text=f"Доля Метана: {100 -self.H2_percent:.0f} %")
+        self.update_label_3k(self.H2_percent,self.CH4_percent)
+    def change_slider_2(self,value):
+        self.CH4_percent=float(value)
+        self.H2_percent = 100 - float(value)
+        self.slider_L_1.set(100-value)
+        self.label_L_1.configure(text=f"Доля Водорода: {100-self.CH4_percent:.0f} %")
+        self.label_L_2.configure(text=f"Доля Метана: {self.CH4_percent:.0f}%")
+        self.update_label_3k(self.H2_percent, self.CH4_percent)
+    def update_label_3k(self,H2_percent,CH4_percent):
+        # Задаём газ (GRI30)
+        # Преобразуем проценты в массовые доли
+        m_H2 = H2_percent / 100.0  # массовая доля водорода
+        m_CH4 = CH4_percent / 100.0  # массовая доля метана
+
+        # Рассчитываем энтальпию смеси
+        H_mix = m_H2 * (-4354) + m_CH4 * (-5566)
+        fuel_composition = {'H2': m_H2, 'CH4': m_CH4}
+        self.formula_gor = fuel_composition
+        self.H_gor = H_mix
+        self.enthalpy_value_fuel = f"{self.H_gor:.2f} кДж/кг" if self.H_gor is not None else ""
+        if self.label_fuel:
+            self.label_fuel.configure(text=self.enthalpy_value_fuel)
+        else:
+            self.label_fuel = create_label(self.frame4, self.enthalpy_value_fuel, 20, 80)
+            # Показываем лейблы
+            if self.auto_fill_var.get() == 1:  # Если чекбокс "Авто" нажат
+                self.Entry1.place_forget()  # Скрываем Entry1
+                self.Entry2.place_forget()  # Скрываем Entry2
+                self.label_oxigen.place(x=20, y=80)
+                self.label_fuel.place(x=20, y=80)
+            else:
+                self.Entry1.place(x=5, y=80)
+                self.Entry2.place(x=10, y=80)
+                # Скрываем лейблы, если они созданы
+                self.label_oxigen.place_forget()
+                self.label_fuel.place_forget()
     def combobox_callback2(self,value):
         """=====Функиця, связанная с сохранением выбранного горючего====="""
-        self.fuel = value
-        self.periodic_check()
+        if value=="Водород + Метан":
+            self.lbr=1
+            if self.frame_L_1 is None:
+                self.H2_percent=60
+                self.CH4_percent=40
+                self.frameL_1=create_frame(self,300,140,205,180,"#2b2b2b","#2b2b2b")
+                self.frameL_2=create_frame(self,280,120,215,190,"#3D3D3D", '#2b2b2b')
+                self.label_L_1=create_label(self.frameL_2,"Доля Водорода: 60 %",10,10)
+                self.label_L_2 = create_label(self.frameL_2, "Доля Метана: 40 %", 10, 60)
+                self.slider_L_1 = ctk.CTkSlider(self.frameL_2, from_=0, to=100, command=self.change_slider_1,
+                                            number_of_steps=100, border_width=4, width=200, height=15,
+                                            fg_color=("#474747"), progress_color=("#0094FF"))
+                self.slider_L_1.place(x=35, y=40)
+                self.slider_L_1.set(60)
+                self.label_L_3 = create_label(self.frameL_2, "0", 20, 32)
+                self.label_L_4 = create_label(self.frameL_2, "100", 240, 32)
+                self.slider_L_2 = ctk.CTkSlider(self.frameL_2, from_=0, to=100, command=self.change_slider_2,
+                                                number_of_steps=100, border_width=4, width=200, height=15,
+                                                fg_color=("#474747"), progress_color=("#0094FF"))
+                self.slider_L_2.place(x=35, y=90)
+                self.slider_L_2.set(40)
+                self.label_L_5 = create_label(self.frameL_2, "0", 20, 82)
+                self.label_L_6 = create_label(self.frameL_2, "100", 240, 82)
+                self.update_label_3k(60,40)
+                self.fuel = value
+        else:
+            self.lbr = 0
+            if self.label_L_1:
+                self.frameL_1.place_forget()
+                self.frameL_2.place_forget()
+                self.label_L_1.place_forget()
+                self.label_L_2.place_forget()
+                self.label_L_3.place_forget()
+                self.label_L_4.place_forget()
+                self.label_L_5.place_forget()
+                self.label_L_6.place_forget()
+                self.slider_L_1.place_forget()
+                self.slider_L_2.place_forget()
+            self.fuel = value
+            self.periodic_check()
     def setup_button(self):
         """=====Создание кнопок====="""
         self.button0 = create_button(self, "?", lambda: show_spravka(self),self.font1, 20, 840, 5)
@@ -393,8 +479,14 @@ class DedalApp(ctk.CTk):
             self.alpha = self.entry5_value.get()
         else:
             self.alpha = "Оптимальный"
-
-        self.alpha_value = substances_data_2.get(self.fuel, {}).get(self.oxigen, None)
+        if self.lbr==1:
+            gas = ct.Solution('gri30.yaml')
+            print(self.formula_gor)
+            self.alpha_value=gas.stoich_air_fuel_ratio(self.formula_gor, self.formula_ox, basis='mass')
+            print(self.alpha_value)
+        else:
+            print(self.formula_gor)
+            self.alpha_value = substances_data_2.get(self.fuel, {}).get(self.oxigen, None)
 
         # Закрываем основное окно
         self.is_running = False
@@ -490,8 +582,12 @@ class SecondWindow(ctk.CTk):
         self.label1.grid(row=2, column=0, sticky='w',padx=10, pady=0)
         self.label1 = ctk.CTkLabel(master=self.scrollbar_frame, text=f"Давление на срезе: {self.p_a} МПа",font=self.font1)
         self.label1.grid(row=3, column=0, sticky='w',padx=10, pady=0)
+        self.label1 = ctk.CTkLabel(master=self.scrollbar_frame, text=f"Стехиометрическое соотношение: {self.km0:.3f} ",font=self.font1)
+        self.label1.grid(row=4, column=0, sticky='w', padx=10, pady=0)
     def graph_opt(self):
         """=====Заполнение массивов основных параметров====="""
+        print(self.choice, self.p_k, self.p_a, self.alpha,
+                          self.fuel, self.oxidizer, self.H_gor, self.H_ok, self.km0)
         self.alph_array,self.I_array,self.T_array,self.R_array,self.alpha_itog=optimalnaya_alpha(self.choice, self.p_k, self.p_a, self.alpha,
                           self.fuel, self.oxidizer, self.H_gor, self.H_ok, self.km0, self.scrollbar_frame,0)
         user.alpha_itog=self.alpha_itog
