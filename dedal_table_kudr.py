@@ -118,6 +118,7 @@ tables = {
 
 
 def find_teta_m_1(R_otn,k_a,teta_a):
+    print(R_otn,k_a,teta_a)
     if k_a<=1.10:
         k_a=1.10
     if k_a>=1.25:

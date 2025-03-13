@@ -9,6 +9,7 @@ import math
 from PIL import Image, ImageTk
 from scipy.interpolate import interp1d
 import warnings
+from tkinter import messagebox
 
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -463,52 +464,53 @@ class DedalApp(ctk.CTk):
 
     def close_window(self):
         """=====Закрытие окна с предварительным сохранием данных====="""
-        # Сохраняем данные перед уничтожением основного окна
-        self.p_k = self.entry3_value.get()
-        self.p_a = self.entry4_value.get()
-        self.selected_option = self.get_selected_option()
-        self.selected_option_alpha = self.get_selected_option_alpha()
-
-        if self.label_oxigen.winfo_ismapped():
-            self.kost = 1
-        else:
-            self.H_ok = self.entry1_value.get()
-            self.H_gor = self.entry2_value.get()
-
-        if self.Entry_alpha.winfo_ismapped():
-            self.alpha = self.entry5_value.get()
-        else:
-            self.alpha = "Оптимальный"
-        if self.lbr==1:
-            gas = ct.Solution('gri30_highT.yaml')
-            print(self.formula_gor)
-            self.alpha_value=gas.stoich_air_fuel_ratio(self.formula_gor, self.formula_ox, basis='mass')
-            print(self.alpha_value)
-        else:
-            print(self.formula_gor)
-            self.alpha_value = substances_data_2.get(self.fuel, {}).get(self.oxigen, None)
-
-        # Закрываем основное окно
-        self.is_running = False
-
         try:
+            # Сохраняем данные перед уничтожением основного окна
+            self.p_k = self.entry3_value.get()
+            self.p_a = self.entry4_value.get()
+            self.selected_option = self.get_selected_option()
+            self.selected_option_alpha = self.get_selected_option_alpha()
+
+            if self.label_oxigen.winfo_ismapped():
+                self.kost = 1
+            else:
+                self.H_ok = self.entry1_value.get()
+                self.H_gor = self.entry2_value.get()
+
+            if self.Entry_alpha.winfo_ismapped():
+                self.alpha = self.entry5_value.get()
+            else:
+                self.alpha = "Оптимальный"
+            if self.lbr == 1:
+                gas = ct.Solution('gri30_highT.yaml')
+                print(self.formula_gor)
+                self.alpha_value = gas.stoich_air_fuel_ratio(self.formula_gor, self.formula_ox, basis='mass')
+                print(self.alpha_value)
+            else:
+                print(self.formula_gor)
+                self.alpha_value = substances_data_2.get(self.fuel, {}).get(self.oxigen, None)
+
+            # Закрываем основное окно
+            self.is_running = False
+            user.p_k = self.p_k
+            user.p_a = self.p_a
+            user.oxigen = self.oxigen
+            user.fuel = self.fuel
+            user.alpha = self.alpha
+            user.alpha_value = self.alpha_value
+            user.selected_option = self.selected_option
+            user.formula_gor = self.formula_gor
+            user.formula_ox = self.formula_ox
+            user.H_gor = self.H_gor
+            user.H_ok = self.H_ok
             self.destroy()
-        except:
-            print('Ошибка')
-        user.p_k = self.p_k
-        user.p_a = self.p_a
-        user.oxigen =self.oxigen
-        user.fuel =self.fuel
-        user.alpha =self.alpha
-        user.alpha_value =self.alpha_value
-        user.selected_option =self.selected_option
-        user.formula_gor =self.formula_gor
-        user.formula_ox =self.formula_ox
-        user.H_gor =self.H_gor
-        user.H_ok =self.H_ok
-        second_window = SecondWindow(self.oxigen, self.fuel, self.p_k, self.p_a, self.alpha, self.alpha_value,
-                                     self.selected_option, self.formula_gor, self.formula_ox, self.H_gor, self.H_ok)
-        second_window.mainloop()
+            second_window = SecondWindow(self.oxigen, self.fuel, self.p_k, self.p_a, self.alpha, self.alpha_value,
+                                         self.selected_option, self.formula_gor, self.formula_ox, self.H_gor, self.H_ok)
+            second_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nВведены неверные данные!")
+            sys.exit()
 class SecondWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой основных параметров в зависимости от к.и.о.----------------------------"""
     def __init__(self, oxigen, fuel, p_k, p_a, alpha, alpha_value, selected_option, formula_gor, formula_ox, H_gor, H_ok):
@@ -641,9 +643,15 @@ class SecondWindow(ctk.CTk):
         app.mainloop()
     def close_window(self):
         """=====Переход к следующему окну====="""
-        self.destroy()
-        third_window = ThirdWindow(self.formula_ox,self.formula_gor,self.p_k,self.p_a,self.alpha,self.km0,self.tech,self.H_gor,self.H_ok,self.alpha_itog,self.choice)
-        third_window.mainloop()
+        try:
+            self.destroy()
+            third_window = ThirdWindow(self.formula_ox, self.formula_gor, self.p_k, self.p_a, self.alpha, self.km0,
+                                       self.tech, self.H_gor, self.H_ok, self.alpha_itog, self.choice)
+            third_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nВведены неверные данные!")
+            sys.exit()
 class ThirdWindow(ctk.CTk):
     """----------------------------Окно с выводом данных в основных сечениях камеры (Астра/Терра)----------------------------"""
     def __init__(self,formula_ox,formula_gor,p_k,p_a,alpha,km0,tech,H_gor,H_ok,alpha_itog,choice):
@@ -894,10 +902,15 @@ class ThirdWindow(ctk.CTk):
         second_window.mainloop()
     def close_window(self):
         """=====Переход к следующему окну====="""
-        self.destroy()
-        user.I_a=self.I_a
-        nozzle_window = NozzleWindow(self.I_a,self.F_kp,self.F_a,self.p_k)
-        nozzle_window.mainloop()
+        try:
+            self.destroy()
+            user.I_a = self.I_a
+            nozzle_window = NozzleWindow(self.I_a, self.F_kp, self.F_a, self.p_k)
+            nozzle_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nВведены неверные данные!")
+            sys.exit()
 class NozzleWindow(ctk.CTk):
     """----------------------------Окно с выбором параметров для построения сужающейся части----------------------------"""
     def __init__(self,I_a,F_kp,F_a,p_k):
@@ -1096,29 +1109,46 @@ class NozzleWindow(ctk.CTk):
         self.image_label.configure(text="")
     def on_slider_change(self, value):
         """=====Обновлении информации при изменении положения ползунка, связанного с площадью====="""
-        self.label4.configure(text=f"Значение Fотн =: {value:.2f}")
-        self.kost=value
-        self.show_thrust()
-        self.show_qm()
-        self.print_true_nozzle()
+        try:
+            self.label4.configure(text=f"Значение Fотн =: {value:.2f}")
+            self.kost = value
+            self.show_thrust()
+            self.show_qm()
+            self.print_true_nozzle()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nПоследовательно выполните проектирование!")
+
     def on_slider_change_1(self, value):
         """=====Обновлении информации при изменении положения ползунка №1====="""
-        self.label22.configure(text=f"R_1 = R_ks*{value:.2f}")
-        self.kost_1=value
-        self.R_1=self.R_ks*self.kost_1
-        self.print_true_nozzle()
+        try:
+            self.label22.configure(text=f"R_1 = R_ks*{value:.2f}")
+            self.kost_1=value
+            self.R_1=self.R_ks*self.kost_1
+            self.print_true_nozzle()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nПоследовательно выполните проектирование!")
     def on_slider_change_2(self, value):
         """=====Обновлении информации при изменении положения ползунка №2====="""
-        self.label23.configure(text=f"R_2 = R_кр*{value:.2f}")
-        self.kost_2=value
-        self.R_2 = self.R_kp * self.kost_2
-        self.print_true_nozzle()
+        try:
+            self.label23.configure(text=f"R_2 = R_кр*{value:.2f}")
+            self.kost_2=value
+            self.R_2 = self.R_kp * self.kost_2
+            self.print_true_nozzle()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nПоследовательно выполните проектирование!")
     def on_slider_change_3(self, value):
         """=====Обновлении информации при изменении положения ползунка №3====="""
-        self.label24.configure(text=f"α/2 = {value}°")
-        self.kost_3=value
-        self.alpha_rad_kon=self.kost_3
-        self.print_true_nozzle()
+        try:
+            self.label24.configure(text=f"α/2 = {value}°")
+            self.kost_3=value
+            self.alpha_rad_kon=self.kost_3
+            self.print_true_nozzle()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nПоследовательно выполните проектирование!")
     def back_window(self):
         """=====Переход к предыдущему окну====="""
         self.destroy()
@@ -1141,18 +1171,23 @@ class NozzleWindow(ctk.CTk):
         third_window.mainloop()
     def close_window(self):
         """=====Переход к следующему окну====="""
-        self.destroy()
-        user.R_1_0=self.kost_1
-        user.R_2_0=self.kost_2
-        user.alpha_suzh_0=self.kost_3
-        user.R_1=self.R_1
-        user.R_2=self.R_2
-        user.Rad_ks=self.R_ks
-        user.Rad_kp=self.R_kp
-        user.alpha_rad_kon=self.alpha_rad_kon
-        user.aar=self.aar
-        nozzle_subsonic_window = SubsonicWindow(self.R_1,self.R_2, self.R_ks,self.R_kp,self.alpha_rad_kon,self.aar)
-        nozzle_subsonic_window.mainloop()
+        try:
+            self.destroy()
+            user.R_1_0=self.kost_1
+            user.R_2_0=self.kost_2
+            user.alpha_suzh_0=self.kost_3
+            user.R_1=self.R_1
+            user.R_2=self.R_2
+            user.Rad_ks=self.R_ks
+            user.Rad_kp=self.R_kp
+            user.alpha_rad_kon=self.alpha_rad_kon
+            user.aar=self.aar
+            nozzle_subsonic_window = SubsonicWindow(self.R_1,self.R_2, self.R_ks,self.R_kp,self.alpha_rad_kon,self.aar)
+            nozzle_subsonic_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nНеверная последовательность ввода данных!")
+            sys.exit()
 class SubsonicWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой сужающейся части----------------------------"""
     def __init__(self, R_1,R_2,R_ks,R_kp,alpha_rad_kon,aar):
@@ -1307,18 +1342,24 @@ class SubsonicWindow(ctk.CTk):
         nozzle_window.mainloop()
     def close_window(self):
         """=====Переход в следующее окно====="""
-        self.p_k=user.p_k
-        self.R_k =user.R_k
-        self.T_k=user.T_k
-        self.m_sum =user.m_sum
-        self.F_ks = user.F_ks
-        self.F_kp = user.F_kp
-        self.B = user.B
-        user.x_suzh = self.x_suzh
-        user.y_suzh = self.y_suzh
-        self.destroy()
-        combustion_chamber_window = CombustionChamberWindow(self.p_k,self.R_k,self.T_k,self.m_sum,self.V_suzh,self.x_suzh, self.y_suzh,self.F_ks,self.F_kp,self.B)
-        combustion_chamber_window.mainloop()
+        try:
+            self.p_k = user.p_k
+            self.R_k = user.R_k
+            self.T_k = user.T_k
+            self.m_sum = user.m_sum
+            self.F_ks = user.F_ks
+            self.F_kp = user.F_kp
+            self.B = user.B
+            user.x_suzh = self.x_suzh
+            user.y_suzh = self.y_suzh
+            self.destroy()
+            combustion_chamber_window = CombustionChamberWindow(self.p_k, self.R_k, self.T_k, self.m_sum, self.V_suzh,
+                                                                self.x_suzh, self.y_suzh, self.F_ks, self.F_kp, self.B)
+            combustion_chamber_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nВыберите тип сужающейся части!")
+
 class CombustionChamberWindow(ctk.CTk):
     """----------------------------Окно с выбором времени пребывания для построения КС----------------------------"""
     def __init__(self, p_k,R_k,T_k,m_sum,V_suzh,x_suzh,y_suzh,F_ks,F_kp,B):
@@ -1389,16 +1430,20 @@ class CombustionChamberWindow(ctk.CTk):
 
     def enter_change(self):
         """=====Расчёт и вывод характеристических параметров камеры сгорания====="""
-        # Обновление текста метки в соответствии со значением ползунка
-        self.tau_pr=float(self.entry1_value.get())
-        self.label1.configure(text=f"Условное время пребывания: {self.tau_pr:.2f} мс")
-        self.L_ks=1000*(((self.tau_pr*0.001*self.R_k*self.T_k*self.F_kp)/self.B)-self.V_suzh)/self.F_ks
-        self.label4.configure(text=f"Длина камеры сгорания: {self.L_ks:.2f} мм")
-        self.l_pr=math.pi*(self.R_k**2)*self.L_ks*(10**(-9))/self.F_kp
-        self.label5.configure(text=f"Приведённая (характеристическая) длина: {self.l_pr:.2f} м")
-        self.x_dozv,self.y_dozv=print_Combustion_Chamber(self.x_suzh,self.y_suzh,self.frame0,self.L_ks)
-        user.tau_pr=self.tau_pr
-        user.l_pr=self.l_pr
+        try:
+            # Обновление текста метки в соответствии со значением ползунка
+            self.tau_pr=float(self.entry1_value.get())
+            self.label1.configure(text=f"Условное время пребывания: {self.tau_pr:.2f} мс")
+            self.L_ks=1000*(((self.tau_pr*0.001*self.R_k*self.T_k*self.F_kp)/self.B)-self.V_suzh)/self.F_ks
+            self.label4.configure(text=f"Длина камеры сгорания: {self.L_ks:.2f} мм")
+            self.l_pr=math.pi*(self.R_k**2)*self.L_ks*(10**(-9))/self.F_kp
+            self.label5.configure(text=f"Приведённая (характеристическая) длина: {self.l_pr:.2f} м")
+            self.x_dozv,self.y_dozv=print_Combustion_Chamber(self.x_suzh,self.y_suzh,self.frame0,self.L_ks)
+            user.tau_pr=self.tau_pr
+            user.l_pr=self.l_pr
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nВведите время пребывания!")
     def place_label(self):
         """=====Создание надписей====="""
         self.label = create_label_0(self.frame0, "Введите условное время пребывания (мс):", 10, 340)
@@ -1421,19 +1466,25 @@ class CombustionChamberWindow(ctk.CTk):
         nozzle_subsonic_window.mainloop()
     def close_window(self):
         """=====Переход в следующее окно====="""
-        self.teta_a=find_teta_a(float(user.p_a),float(user.p_k))
-        # self.teta_m = find_teta_m(float(user.w_a),float(user.T_kp),float(user.R_kp),float(user.k_a),float(user.k_kp))
-        self.Rad_kp=user.Rad_kp
-        self.Rad_a=user.Rad_a
-        self.teta_m, self.l_ras_otn = find_teta_m_1(self.Rad_a / self.Rad_kp, float(user.k_a), self.teta_a)
-        user.teta_a = self.teta_a
-        user.L_ks = self.L_ks
-        user.teta_m=self.teta_m
-        user.x_dozv=self.x_dozv
-        user.y_dozv=self.y_dozv
-        self.destroy()
-        nozzle_laval_window = LavalWindow(self.teta_a,self.teta_m,self.Rad_kp,self.Rad_a,self.x_dozv,self.y_dozv,self.L_ks,self.l_ras_otn)
-        nozzle_laval_window.mainloop()
+        try:
+            self.teta_a=find_teta_a(float(user.p_a),float(user.p_k))
+            # self.teta_m = find_teta_m(float(user.w_a),float(user.T_kp),float(user.R_kp),float(user.k_a),float(user.k_kp))
+            self.Rad_kp=user.Rad_kp
+            self.Rad_a=user.Rad_a
+            self.teta_m, self.l_ras_otn = find_teta_m_1(self.Rad_a / self.Rad_kp, float(user.k_a), self.teta_a)
+            print(4,self.teta_m,5,self.l_ras_otn)
+            user.teta_a = self.teta_a
+            user.L_ks = self.L_ks
+            user.teta_m=self.teta_m
+            user.x_dozv=self.x_dozv
+            user.y_dozv=self.y_dozv
+            self.destroy()
+            nozzle_laval_window = LavalWindow(self.teta_a,self.teta_m,self.Rad_kp,self.Rad_a,self.x_dozv,self.y_dozv,self.L_ks,self.l_ras_otn)
+            nozzle_laval_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\nНет значений по таблицам Кудрявцева")
+            sys.exit()
 class LavalWindow(ctk.CTk):
     """----------------------------Окно с отрисовкой профилированного сопла Лаваля----------------------------"""
     def __init__(self, teta_a,teta_m,Rad_kp,Rad_a,x_dozv,y_dozv,L_ks,l_ras_otn):
@@ -1527,10 +1578,15 @@ class LavalWindow(ctk.CTk):
 
     def close_window(self):
         """=====Переход в следующее окно====="""
-        self.destroy()
-        Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
-                                     user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,user.p_kp)
-        Graph_po_dline.mainloop()
+        try:
+            self.destroy()
+            Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
+                                         user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,user.p_kp)
+            Graph_po_dline.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\n :( ")
+            sys.exit()
 class GraphWindow(ctk.CTk):
     """----------------------------Окно с выводом всех основных параметров по длине сопла----------------------------"""
     def __init__(self,oxigen,fuel,p_k, p_a, alpha_itog, alpha_value,selected_option,formula_gor,formula_ox,H_gor,H_ok,p_kp):
@@ -1707,27 +1763,32 @@ class GraphWindow(ctk.CTk):
         nozzle_laval_window.mainloop()
     def close_window(self):
         """=====Переход в следующее окно====="""
-        self.destroy()
-        user.x_dzv=self.x_dzv
-        user.r_dzv = self.r_dzv
-        user.T_dozv = self.T_dozv
-        user.rho_dozv = self.rho_dozv
-        user.R_dozv = self.R_dozv
-        user.k_dozv = self.k_dozv
-        user.w_dozv = self.w_dozv
-        user.F_dozv = self.F_dozv
-        user.x_svzv = self.x_svzv
-        user.M_dozv = self.M_dozv
-        user.r_sv = self.r_sv
-        user.T_sv_array = self.T_sv_array
-        user.rho_sv_array = self.rho_sv_array
-        user.R_sv_array = self.R_sv_array
-        user.k_sv_array = self.k_sv_array
-        user.w_sv_array = self.w_sv_array
-        user.M_sv = self.M_sv
-        user.F_sv_array = self.F_sv_array
-        Losses_window = LossesWindow(self.x_dzv,self.r_dzv,self.T_dozv,self.rho_dozv,self.R_dozv,self.k_dozv,self.w_dozv,self.F_dozv,self.x_svzv,self.M_dozv,self.r_sv,self.T_sv_array,self.rho_sv_array,self.R_sv_array,self.k_sv_array,self.w_sv_array,self.M_sv,self.F_sv_array)
-        Losses_window.mainloop()
+        try:
+            self.destroy()
+            user.x_dzv=self.x_dzv
+            user.r_dzv = self.r_dzv
+            user.T_dozv = self.T_dozv
+            user.rho_dozv = self.rho_dozv
+            user.R_dozv = self.R_dozv
+            user.k_dozv = self.k_dozv
+            user.w_dozv = self.w_dozv
+            user.F_dozv = self.F_dozv
+            user.x_svzv = self.x_svzv
+            user.M_dozv = self.M_dozv
+            user.r_sv = self.r_sv
+            user.T_sv_array = self.T_sv_array
+            user.rho_sv_array = self.rho_sv_array
+            user.R_sv_array = self.R_sv_array
+            user.k_sv_array = self.k_sv_array
+            user.w_sv_array = self.w_sv_array
+            user.M_sv = self.M_sv
+            user.F_sv_array = self.F_sv_array
+            Losses_window = LossesWindow(self.x_dzv,self.r_dzv,self.T_dozv,self.rho_dozv,self.R_dozv,self.k_dozv,self.w_dozv,self.F_dozv,self.x_svzv,self.M_dozv,self.r_sv,self.T_sv_array,self.rho_sv_array,self.R_sv_array,self.k_sv_array,self.w_sv_array,self.M_sv,self.F_sv_array)
+            Losses_window.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\n :( ")
+            sys.exit()
 class LossesWindow(ctk.CTk):
     """----------------------------Окно, связанное с потерями и коническим соплом----------------------------"""
     def __init__(self,x_dzv,r_dzv,T_dozv,rho_dozv,R_dozv,k_dozv,w_dozv,F_dozv,x_svzv,M_dozv,r_sv,T_sv_array,rho_sv_array,R_sv_array,k_sv_array,w_sv_array,M_sv,F_sv_array):
@@ -1962,9 +2023,14 @@ class LossesWindow(ctk.CTk):
         Graph_po_dline.mainloop()
     def close_window(self):
         """=====Завершение работы. Выход====="""
-        self.destroy()
-        window_10 = Window_10(user.F_kp,user.m_sum,user.F_a,user.I_a,self.phi_s_prof)
-        window_10.mainloop()
+        try:
+            self.destroy()
+            window_10 = Window_10(user.F_kp,user.m_sum,user.F_a,user.I_a,self.phi_s_prof)
+            window_10.mainloop()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\n :( ")
+            sys.exit()
 class Window_10(ctk.CTk):
     """----------------------------Окно, рассчитвающее действительное сопло----------------------------"""
     def __init__(self,F_kp,m_sum,F_a,I_a,phi_s_prof):
@@ -2075,22 +2141,23 @@ class Window_10(ctk.CTk):
         sys.exit()
     def entry_change(self):
         '''=====Расчёт нового действительного сопла====='''
-        self.phi_k=float(self.entry1_value.get())
-        self.I_a_d=self.I_a*self.phi_k*self.phi_s_prof
-        self.m_sum_d=(self.m_sum)/(self.phi_k*self.phi_s_prof)
-        self.F_kp_d=self.F_kp/self.phi_s_prof
-        self.F_a_d=self.F_a/(self.phi_s_prof**2)
-        self.d_kp_d=math.sqrt((4*self.F_kp_d)/math.pi)*1000
-        self.d_a_d =math.sqrt((4*self.F_a_d)/math.pi)*1000
-        self.F_ks_d=self.F_kp_d*user.F_otn_1
-        self.d_ks_d=math.sqrt((4*self.F_ks_d)/math.pi)*1000
-        self.label_3.configure(text=f"Значение удельного пустотного действительного импульса: {self.I_a_d:.2f} м/с")
-        self.label_4.configure(text=f"Действительный расход топлива: {self.m_sum_d:.2f} кг/с")
-        self.label_5_1.configure(text=f"F_кр={self.F_kp_d:.6f} м^2")
-        self.label_5_2.configure(text=f"F_a={self.F_a_d:.6f} м^2")
-        self.label_6_1.configure(text=f"d_кр={self.d_kp_d:.3f} мм")
-        self.label_6_2.configure(text=f"d_a={self.d_a_d:.3f} мм")
-        self.text_2=(f'''Общие потери в камере сгорания: {self.phi_k}
+        try:
+            self.phi_k=float(self.entry1_value.get())
+            self.I_a_d=self.I_a*self.phi_k*self.phi_s_prof
+            self.m_sum_d=(self.m_sum)/(self.phi_k*self.phi_s_prof)
+            self.F_kp_d=self.F_kp/self.phi_s_prof
+            self.F_a_d=self.F_a/(self.phi_s_prof**2)
+            self.d_kp_d=math.sqrt((4*self.F_kp_d)/math.pi)*1000
+            self.d_a_d =math.sqrt((4*self.F_a_d)/math.pi)*1000
+            self.F_ks_d=self.F_kp_d*user.F_otn_1
+            self.d_ks_d=math.sqrt((4*self.F_ks_d)/math.pi)*1000
+            self.label_3.configure(text=f"Значение удельного пустотного действительного импульса: {self.I_a_d:.2f} м/с")
+            self.label_4.configure(text=f"Действительный расход топлива: {self.m_sum_d:.2f} кг/с")
+            self.label_5_1.configure(text=f"F_кр={self.F_kp_d:.6f} м^2")
+            self.label_5_2.configure(text=f"F_a={self.F_a_d:.6f} м^2")
+            self.label_6_1.configure(text=f"d_кр={self.d_kp_d:.3f} мм")
+            self.label_6_2.configure(text=f"d_a={self.d_a_d:.3f} мм")
+            self.text_2=(f'''Общие потери в камере сгорания: {self.phi_k}
 Значение удельного пустотного действительного импульса: {self.I_a_d:.2f} м/с
 Действительный расход топлива: {self.m_sum_d:.2f} кг/с
 F_кр={self.F_kp_d:.6f} м^2
@@ -2098,20 +2165,24 @@ F_a={self.F_a_d:.6f} м^2
 d_кр={self.d_kp_d:.3f} мм
 d_a={self.d_a_d:.3f} мм
 ''')
-        user.phi_k = self.phi_k
-        user.I_a_d=self.I_a_d
-        user.m_sum_d = self.m_sum_d
-        user.F_kp_d = self.F_kp_d
-        user.F_a_d = self.F_a_d
-        user.d_kp_d = self.d_kp_d
-        user.d_a_d = self.d_a_d
+            user.phi_k = self.phi_k
+            user.I_a_d=self.I_a_d
+            user.m_sum_d = self.m_sum_d
+            user.F_kp_d = self.F_kp_d
+            user.F_a_d = self.F_a_d
+            user.d_kp_d = self.d_kp_d
+            user.d_a_d = self.d_a_d
 
-        self.print_nozzle_d()
-        self.slice_p()
-        self.find_termodynamics_array()
-        self.poteri_dozvuk()
-        self.poteri_sverhzvuk()
-        self.print_scrollbar()
+            self.print_nozzle_d()
+            self.slice_p()
+            self.find_termodynamics_array()
+            self.poteri_dozvuk()
+            self.poteri_sverhzvuk()
+            self.print_scrollbar()
+        except Exception as e:
+            # Если произошла ошибка, показываем сообщение
+            messagebox.showerror("Ошибка", f"Произошла ошибка:\n Введите потери в камере!")
+            sys.exit()
     def print_scrollbar(self):
         self.scrollbar_frame_1 = ctk.CTkScrollableFrame(self.frame0, width=650, height=170, fg_color='black')  # 520
         self.scrollbar_frame_1.place(x=2, y=1100)
