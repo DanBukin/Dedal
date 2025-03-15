@@ -1435,8 +1435,9 @@ class CombustionChamberWindow(ctk.CTk):
             self.tau_pr=float(self.entry1_value.get())
             self.label1.configure(text=f"Условное время пребывания: {self.tau_pr:.2f} мс")
             self.L_ks=1000*(((self.tau_pr*0.001*self.R_k*self.T_k*self.F_kp)/self.B)-self.V_suzh)/self.F_ks
+            self.V_ks=self.tau_pr*0.001*self.R_k*self.T_k*self.F_kp/self.B
             self.label4.configure(text=f"Длина камеры сгорания: {self.L_ks:.2f} мм")
-            self.l_pr=math.pi*(self.R_k**2)*self.L_ks*(10**(-9))/self.F_kp
+            self.l_pr=self.V_ks/self.F_kp
             self.label5.configure(text=f"Приведённая (характеристическая) длина: {self.l_pr:.2f} м")
             self.x_dozv,self.y_dozv=print_Combustion_Chamber(self.x_suzh,self.y_suzh,self.frame0,self.L_ks)
             user.tau_pr=self.tau_pr
