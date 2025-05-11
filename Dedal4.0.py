@@ -988,7 +988,7 @@ class NozzleWindow(ctk.CTk):
         self.label4 = create_label(self.frame2, f"Значение Fотн =: {4.00:.2f} ", 10, 60)
         self.label5 = create_label(self.frame2, "Введите относительную площадь Fкс/Fкр:", 10, 2)
         self.label6 = create_label(self.frame2, "2.00", 10, 30)
-        self.label7 = create_label(self.frame2, "6.00", 205, 30)
+        self.label7 = create_label(self.frame2, "10.00", 205, 30)
         self.label8 = create_label(self.frame3, "Для расчета геометрии необходимо двигать", x=3, y=5)
         self.label8 = create_label(self.frame3, "ползунок. Убедитесь, что вы также ввели",x=3, y=30)
         self.label8 = create_label(self.frame3, "значение пустотной тяги в окне слева!",x=3, y=55)
@@ -1087,7 +1087,7 @@ class NozzleWindow(ctk.CTk):
             self.label3 = create_label_2(self.frame1, f'{f"{self.m_sum:.2f}"} кг/с', 10, 70)
     def place_slider(self):
         """=====Создание слайдеров с выбором радиусов====="""
-        self.slider = ctk.CTkSlider(self.frame2, from_=2, to=6,command=self.on_slider_change,number_of_steps=80,border_width=4, width=150, height=15,fg_color=("#474747"),progress_color=("#0094FF"))
+        self.slider = ctk.CTkSlider(self.frame2, from_=2, to=10,command=self.on_slider_change,number_of_steps=80,border_width=4, width=150, height=15,fg_color=("#474747"),progress_color=("#0094FF"))
         self.slider.place(x=50,y=35)
         self.slider.set(4)
         self.slider_1 = ctk.CTkSlider(self.frame7, from_=0.8, to=1.2, command=self.on_slider_change_1, number_of_steps=40,border_width=4, width=150, height=15, fg_color=("#474747"),progress_color=("#0094FF"))
@@ -1579,15 +1579,19 @@ class LavalWindow(ctk.CTk):
 
     def close_window(self):
         """=====Переход в следующее окно====="""
-        try:
-            self.destroy()
-            Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
-                                         user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,user.p_kp)
-            Graph_po_dline.mainloop()
-        except Exception as e:
-            # Если произошла ошибка, показываем сообщение
-            messagebox.showerror("Ошибка", f"Произошла ошибка:\n :( ")
-            sys.exit()
+        self.destroy()
+        Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
+                                     user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,user.p_kp)
+        Graph_po_dline.mainloop()
+        # try:
+        #     self.destroy()
+        #     Graph_po_dline = GraphWindow(user.oxigen, user.fuel, user.p_k, user.p_a, user.alpha_itog, user.alpha_value,
+        #                                  user.selected_option, user.formula_gor, user.formula_ox, user.H_gor, user.H_ok,user.p_kp)
+        #     Graph_po_dline.mainloop()
+        # except Exception as e:
+        #     # Если произошла ошибка, показываем сообщение
+        #     messagebox.showerror("Ошибка", f"Произошла ошибка:\n :( ")
+        #     sys.exit()
 class GraphWindow(ctk.CTk):
     """----------------------------Окно с выводом всех основных параметров по длине сопла----------------------------"""
     def __init__(self,oxigen,fuel,p_k, p_a, alpha_itog, alpha_value,selected_option,formula_gor,formula_ox,H_gor,H_ok,p_kp):
@@ -1643,7 +1647,10 @@ class GraphWindow(ctk.CTk):
         sys.exit()  # Завершает работу программы
     def slice_p(self):
         """=====Деление массива даления на точки для построения графиков====="""
-        self.p_dozv_array_0 = np.linspace(self.p_k, (self.p_k+self.p_kp)*0.5, 10)
+        if user.F_ks/user.F_kp>=3:
+            self.p_dozv_array_0 = np.linspace(self.p_k, (self.p_k+self.p_kp)*0.5, 10)
+        else:
+            self.p_dozv_array_0 = np.linspace(self.p_k, (self.p_k + self.p_kp) * 0.5, 2)
         self.p_dozv_array = np.linspace((self.p_k+self.p_kp)*0.5, self.p_kp, 10)
         self.p_cverhzv_array = np.geomspace(self.p_kp, self.p_a, 50)
     def place_scrollbar(self):
@@ -1699,13 +1706,16 @@ class GraphWindow(ctk.CTk):
         self.w_dozv=np.concatenate((self.w_dozv_array_0, self.w_dozv_array))
         self.F_dozv = np.concatenate((self.F_dozv_array_0, self.F_dozv_array))
         self.r_dzv = np.concatenate((self.r_dozv_0, self.r_dozv))
-
+        print(8)
         self.M_dozv=[]
         self.M_sv = []
+        print(9)
         for R,T,k,w in zip(self.T_dozv, self.R_dozv,self.k_dozv,self.w_dozv):
             self.M_dozv.append(w/((R*T*k)**0.5))
+        print(10)
         for R,T,k,w in zip(self.T_sv_array, self.R_sv_array,self.k_sv_array,self.w_sv_array):
             self.M_sv.append(w/((R*T*k)**0.5))
+        print(11)
         self.T_array = np.concatenate((self.T_dozv, self.T_sv_array))
         self.rho_array = np.concatenate((self.rho_dozv, self.rho_sv_array))
         self.R_array = np.concatenate((self.R_dozv, self.R_sv_array))
@@ -1713,24 +1723,29 @@ class GraphWindow(ctk.CTk):
         self.w_array = np.concatenate((self.w_dozv, self.w_sv_array))
         self.F_array = np.concatenate((self.F_dozv, self.F_sv_array))
         self.M_array= np.concatenate((self.M_dozv, self.M_sv))
-
-        self.f=interp1d(user.y_suzh, user.x_suzh, kind='linear') #nearest
-        self.f_1 = interp1d(user.y_sv, user.x_sv, kind='linear')
+        self.f = interp1d(user.y_suzh, user.x_suzh, kind='linear', fill_value="extrapolate", bounds_error=False)
+        self.f_1 = interp1d(user.y_sv, user.x_sv, kind='linear', fill_value="extrapolate", bounds_error=False)
         self.r_dzv[0]=user.y_suzh[0]
         self.r_dzv[-1] = user.y_suzh[-1]
-        self.r_sv[0]=self.y_sv[0]
-        self.r_sv[-1]=self.y_sv[-1]
+        self.r_sv[0]=user.y_sv[0]
+        self.r_sv[-1]=user.y_sv[-1]
         for r in self.r_dzv:
             self.x_dzv.append(self.f(r))
         for r in self.r_sv:
             self.x_svzv.append(self.f_1(r))
+        print(16000)
+        print(user.y_suzh)
+        print(17000)
+        print(self.r_dzv)
         self.x_graph = np.concatenate((self.x_dzv, self.x_svzv))
         self.p_graph_1 = np.concatenate((self.p_dozv_array_0, self.p_dozv_array))
         self.p_graph = np.concatenate((self.p_graph_1, self.p_cverhzv_array))
         self.a_kp=(user.k_kp*user.R_kp*user.T_kp)**0.5
+        print(17)
         self.labda_w=[]
         for w in self.w_array:
             self.labda_w.append(w/self.a_kp)
+        print(18)
         self.rw=[]
         for r,w in zip(self.rho_array, self.w_array):
             self.rw.append(r*w)
@@ -1741,6 +1756,7 @@ class GraphWindow(ctk.CTk):
         print_graph_p_x(self.x_graph, self.M_array, user.L_ks, self.frame0, 30, 2850,"Изменение числа Маха по длине сопла", 'х, мм', "М",9,7)
         print_graph_p_x(self.x_graph, self.labda_w, user.L_ks, self.frame0, 30, 3550,"Изменение приведённой скорости по длине сопла", 'х, мм', "lambda",9,7)
         print_graph_p_x(self.x_graph, self.rw, user.L_ks, self.frame0, 30, 4250,"Изменение расходонапряжённости по длине сопла", 'х, мм', "rw, кг/м2с",9,7)
+        print(19)
         user.X_graph=self.x_graph
         user.P_graph=self.p_graph
         user.T_graph=self.T_array
@@ -1749,6 +1765,7 @@ class GraphWindow(ctk.CTk):
         user.M_graph=self.M_array
         user.Lambda_graph=self.labda_w
         user.RW_graph=self.rw
+        print(20)
     def back_window(self):
         """=====Переход в предыдущее окно====="""
         self.destroy()
@@ -2225,7 +2242,12 @@ d_a={self.d_a_d:.3f} мм
         self.p_k=float(user.p_k)
         self.p_kp = float(user.p_kp)
         self.p_a = float(user.p_a)
-        self.p_dozv_array_0_d = np.linspace(self.p_k, (self.p_k + self.p_kp) * 0.5, 10)
+
+        if user.F_ks / user.F_kp >= 3:
+            self.p_dozv_array_0_d = np.linspace(self.p_k, (self.p_k + self.p_kp) * 0.5, 10)
+        else:
+            self.p_dozv_array_0_d = np.linspace(self.p_k, (self.p_k + self.p_kp) * 0.5, 2)
+
         self.p_dozv_array_0_d=self.p_dozv_array_0_d[:-1]
         self.p_dozv_array_d = np.linspace((self.p_k + self.p_kp) * 0.5, self.p_kp, 10)
         self.p_cverhzv_array_d = np.geomspace(self.p_kp, self.p_a, 40)
